@@ -9,11 +9,11 @@ const stress_dict = JSON.parse(fs.readFileSync('private/data/compiled.json', 'ut
 
 let subdomain = '/poetry';
 
-app.use(`${subdomain}`, express.static(`${__dirname}/public`), { extensions: ['html'] }); // tells the app to use a public folder and remove the html extension
+app.use(`${subdomain}/`, express.static(__dirname + '/public', { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
 
 app.get(`${subdomain}/`, (req, res) => {
 
-    res.sendFile(`${__dirname}/public/index.html`);
+    res.sendFile(__dirname + '/public/index.html');
 
 });
 app.get(`${subdomain}/login`, (req, res) => {
