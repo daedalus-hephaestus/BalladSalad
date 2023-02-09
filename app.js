@@ -9,6 +9,12 @@ const stress_dict = JSON.parse(fs.readFileSync('private/data/compiled.json', 'ut
 
 app.use(express.static(__dirname + '/public', { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
 
+app.get('/.well-known/pki-validation/005A91F79400B0D1CB83AB9D307983ED.txt', (req, res) => {
+
+    res.sendFile(__dirname + '/005A91F79400B0D1CB83AB9D307983ED.txt');
+
+});
+
 app.get('/', (req, res) => {
 
     res.sendFile(__dirname + '/public/index.html');
