@@ -9,7 +9,7 @@ const stress_dict = JSON.parse(fs.readFileSync('private/data/compiled.json', 'ut
 
 let subdomain = '/poetry';
 
-app.use(express.static(`${subdomain}${__dirname}/public`, { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
+app.use(express.static(`${subdomain}/${__dirname}/public`, { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
 
 app.get(`${subdomain}/`, (req, res) => {
 
