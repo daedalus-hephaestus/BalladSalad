@@ -16,6 +16,11 @@ app.get(`${subdomain}/`, (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 
 });
+app.get(`${subdomain}/socket.io/socket.io.js`, (req, res) => {
+
+    res.sendFile(`${__dirname}/socket.io/socket.io.js`);
+
+});
 app.get(`${subdomain}/login`, (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/login.html`);
