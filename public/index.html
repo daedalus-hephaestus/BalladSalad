@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Poetry</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <select id="meter" class="select">
+            <option value="0101010101">Iambic Pentameter</option>
+            <option value="10010010010011">Dactylic Hexameter</option>
+        </select>
+        <br>
+        <br>
+        <textarea class="poem_input" id="line"></textarea>
+        <br>
+        <br>
+        <input class="button" type="button" value="Test" id="test">
+        <br>
+        <br>
+        <p id="output"></p>
+        <script src="js/index.js"></script>
+    </div>
+</body>
+
+</html>
