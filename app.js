@@ -7,21 +7,14 @@ const io = require('socket.io')(server);
 
 const stress_dict = JSON.parse(fs.readFileSync('private/data/compiled.json', 'utf8'));
 
-let subdomain = '/poetry';
+app.use(express.static(__dirname + '/public', { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
 
-app.use(`${subdomain}/`, express.static(__dirname + '/public', { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
-
-app.get(`${subdomain}/`, (req, res) => {
+app.get('/', (req, res) => {
 
     res.sendFile(__dirname + '/public/index.html');
 
 });
-app.get(`${subdomain}/socket.io/socket.io.js`, (req, res) => {
-
-    res.sendFile(`${__dirname}/socket.io/socket.io.js`);
-
-});
-app.get(`${subdomain}/login`, (req, res) => {
+app.get('/login', (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/login.html`);
     
