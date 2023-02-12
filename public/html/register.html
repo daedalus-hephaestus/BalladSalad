@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Poetry</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <form method="POST" action="/create_account">
+            Choose for yourself a noble title.
+            <br>
+            It can't be taken (this is vital).
+            <br><br>
+            <input required type="text" placeholder="username" minlength="4" id="username" name="username">
+            <br><br>
+            In this box your email set,
+            <br>
+            in case your password you forget.
+            <br><br>
+            <input required type="text" placeholder="email" minlength="4" id="email" name="email">
+            <br><br>
+            Your information safe and sound,
+            <br>
+            will by this secret word be bound.
+            <br><br>
+            <input required type="password" placeholder="password" minlength="8" id="password1" name="password">
+            <br><br>
+            Repeat the word, if you don't mind,
+            <br>
+            in case your hands were misaligned.
+            <br><br>
+            <input required type="password" placeholder="repeat password" id="password2">
+            <br><br>
+            Now don't give up, and do not quit!
+            <br>
+            Just give that "register" a hit!
+            <br><br>
+            <input type="submit" value="register">
+        </form>
+        <script src="js/register.js"></script>
+    </div>
+</body>
+
+</html>
