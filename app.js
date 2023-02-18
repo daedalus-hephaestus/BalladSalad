@@ -69,11 +69,15 @@ app.use((req, res, next) => {
 
        authStatic(req, res, next);
 
+    } else {
+
+        unauthStatic(req, res, next);
+
     }
 
 });
 
-app.use(express.static(`${__dirname}/public`, { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
+//app.use(express.static(`${__dirname}/public`, { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
 
 app.get('/', (req, res) => {
 
