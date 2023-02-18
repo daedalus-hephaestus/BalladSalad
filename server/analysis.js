@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
-const stress_dict = JSON.parse(fs.readFileSync('private/data/compiled.json', 'utf8'));
+const stress_dict = JSON.parse(fs.readFileSync('server/data/compiled.json', 'utf8'));
 
 const Word = function (word) {
 

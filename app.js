@@ -8,9 +8,12 @@ const bodyParser = require('body-parser'); // pulls values from html5 forms
 const bcrypt = require('bcryptjs'); // encrypts user passwords
 const uuid = require('uuid'); // generates uuids for password resets
 
-const part = require(`./private/analysis`); // the poetry library
-const mail = require(`./private/mailer.js`);
-const { User } = require('./private/models.js');
+const part = require(`./server/analysis`); // the poetry library
+const mail = require(`./server/mailer.js`);
+const { User } = require('./server/models.js');
+
+const unauthStatic = express.static(`${__dirname}/public`, { extensions: ['html'] });
+const authStatic = express.static(`${__dirname}/private`, { extensions: ['html'] });
 
 const MongoDBSession = require('connect-mongodb-session')(session);
 const mongoose = require('mongoose');
@@ -58,7 +61,19 @@ const isAuth = (req, res, next) => { // middleware function that checks to make 
 
 app.use(sessionMiddleware);
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(`${__dirname}/public`, { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
+
+app.use(unauthStatic);
+app.use((req, res, next) => {
+
+    if (req.session.isAuth) {
+
+       authStatic(req, res, next);
+
+    }
+
+});
+
+//app.use(express.static(`${__dirname}/public`, { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
 
 app.get('/', (req, res) => {
 
@@ -68,9 +83,14 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/login.html`);
-    
+
 });
 app.get('/register', (req, res) => {
+
+    res.sendFile(`${__dirname}/public/html/register.html`);
+
+});
+app.get('/dashboard', isAuth, (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/register.html`);
 
@@ -80,13 +100,11 @@ app.post('/create_account', async (req, res) => {
 
     const { email, username, password } = req.body; // gets the submitted email and password from the inputs
 
-    console.log(email);
-
     let user = await User.findOne({ email }); // checks to make sure the email is not in use
 
     if (user) { // if the email is in use
 
-        return res.redirect('/'); // reload the page 
+        return res.redirect('/'); // reload the page
 
     }
 
@@ -102,7 +120,7 @@ app.post('/create_account', async (req, res) => {
     let hash = await bcrypt.hash(password, 12); // hashes the password
 
     user = new User({
-        
+
         email: email,
         username: username,
         password: hash,
@@ -113,6 +131,52 @@ app.post('/create_account', async (req, res) => {
     await user.save();
 
     return res.redirect('/');
+
+});
+app.post('/login', async (req, res) => {
+
+    const { username, password } = req.body; // gets the user's email and password from the inputs
+
+    let user = await User.findOne({ username }); // finds the user in the database
+
+    if (!user) {
+
+        user = await User.findOne({ email: username });
+
+    }
+
+    if (!user) { // if no user is found
+
+        return res.redirect('/login'); // redirec to the login page
+
+    }
+
+    let isMatch = await bcrypt.compare(password, user.password); // bcrypt encrypts the password and compares the hashes
+
+    if (!isMatch) { // if the passwords don't match
+
+        return res.redirect('login'); // redirec to the login page
+
+    }
+
+    req.session.isAuth = true; // authorizes the user
+    req.session.username = user.username; // saves the user's email in the session
+    res.redirect('/dashboard'); // redirects to the dashboard
+
+});
+app.post('/logout', async (req, res) => {
+
+    req.session.destroy((err) => {
+
+        if (err) {
+
+            throw err;
+
+        }
+
+        res.redirect('/');
+
+    });
 
 });
 

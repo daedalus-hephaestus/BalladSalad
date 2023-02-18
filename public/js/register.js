@@ -3,16 +3,28 @@ let email = document.getElementById('email');
 let password1 = document.getElementById('password1');
 let password2 = document.getElementById('password2');
 
+username.onchange = function () {
+
+    if (!username.value.match(/^[0-9a-zA-Z]+$/)) {
+
+        username.setCustomValidity('Only letters you must choose, though numbers also you may use.');
+
+    } else {
+
+        username.setCustomValidity('');
+
+    }
+
+};
+
 email.onchange = function () {
 
     if (!email.value.includes('@')) {
 
-        console.log(true);
         email.setCustomValidity('Do not mock us, for pity\'s sake, this address that you typed is fake!');
 
     } else {
 
-        console.log(false);
         email.setCustomValidity('');
 
     }
