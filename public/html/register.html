@@ -8,37 +8,35 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="register_container">
         <form method="POST" action="/create_account">
+            <br>
             Choose for yourself a noble title.
             <br>
             It can't be taken (this is vital).
             <br><br>
-            <input required type="text" placeholder="username" minlength="4" id="username" name="username">
+            <input required type="text" placeholder="username" minlength="4" id="username" name="username" class="text_input">
             <br><br>
             In this box your email set,
             <br>
             in case your password you forget.
             <br><br>
-            <input required type="text" placeholder="email" minlength="4" id="email" name="email">
+            <input required type="text" placeholder="email" minlength="4" id="email" name="email" class="text_input">
             <br><br>
             Your information safe and sound,
             <br>
             will by this secret word be bound.
             <br><br>
-            <input required type="password" placeholder="password" minlength="8" id="password1" name="password">
+            <input required type="password" placeholder="password" minlength="8" id="password1" name="password" class="text_input">
             <br><br>
             Repeat the word, if you don't mind,
             <br>
             in case your hands were misaligned.
             <br><br>
-            <input required type="password" placeholder="repeat password" id="password2">
-            <br><br>
-            Now don't give up, and do not quit!
+            <input required type="password" placeholder="repeat password" id="password2" class="text_input">
+            <br><br><br>
+            <input type="submit" value="register" class="button" id="submit">
             <br>
-            Just give that "register" a hit!
-            <br><br>
-            <input type="submit" value="register">
         </form>
         <script src="js/register.js"></script>
     </div>

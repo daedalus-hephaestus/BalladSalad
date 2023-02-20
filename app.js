@@ -53,7 +53,7 @@ const isAuth = (req, res, next) => { // middleware function that checks to make 
 
     } else {
 
-        res.redirect('/'); // redirects to the home page if the session is not authorized
+        res.redirect('/login'); // redirects to the login page if the session is not authorized
 
     }
 
@@ -76,8 +76,6 @@ app.use((req, res, next) => {
     }
 
 });
-
-//app.use(express.static(`${__dirname}/public`, { extensions: ['html'] })); // tells the app to use a public folder and remove the html extension
 
 app.get('/', (req, res) => {
 
@@ -201,6 +199,38 @@ io.sockets.on('connection', (socket) => {
     socket.on('test', async (data) => {
 
         // console.log(await ShakespereanSonnet.check(data.line));
+
+    });
+    socket.on('check_email', async (data) => { // the client checking an email's availability
+
+        const email = data; // the email address
+        let user = await User.findOne({ email }); // searches the users to see if the email is in use
+
+        if (user) { // if the email is in use
+
+            socket.emit('email_result', 'unavailable');
+
+        } else { // if the email isn't in use
+
+            socket.emit('email_result', 'checked');
+
+        }
+
+    });
+    socket.on('check_username', async (data) => { // the client checking a username's availability
+
+        const username = data; // the username
+        let user = await User.findOne({ username }); // searches the users to see if the username is in use
+
+        if (user) { // if the username is in use
+
+            socket.emit('username_result', 'unavailable');
+
+        } else { // if the username isn't in use
+
+            socket.emit('username_result', 'checked');
+
+        }
 
     });
 

@@ -27,7 +27,53 @@ body {
     height: 80%;
     padding: 25px;
     margin: 5% auto;
+    border-radius: 4px;
     background-color: var(--platinum);
+    box-shadow: 6px 6px 6px var(--granite-gray);
+
+}
+
+.register_container {
+
+    text-align: center;
+    max-width: 400px;
+    min-width: 250px;
+    height: 80%;
+    padding: 25px;
+    margin: 5% auto;
+    border-radius: 4px;
+    background-color: var(--platinum);
+    box-shadow: 6px 6px 6px var(--granite-gray);
+
+}
+
+.text_input {
+
+    border: none;
+    background-color: white; 
+    color: var(--cg-blue);
+    text-align: center;
+    padding: 15px;
+    height: 0px;
+    font-size: 16px;
+    font-family: 'Lora';
+    max-width: 300px;
+    box-shadow: 1px 1px 6px var(--granite-gray);
+    
+
+}
+
+.text_input::placeholder {
+
+    color: var(--granite-gray);
+
+}
+.text_input:-webkit-autofill,
+.text_input:-webkit-autofill:hover,
+.text_input:-webkit-autofill:focus,
+.text_input:-webkit-autofill:active {
+
+    -webkit-text-fill-color: var(--cg-blue);
 
 }
 
@@ -52,6 +98,7 @@ body {
     background-color: var(--red-salsa);
     transition: 0.4s;
     border: none;
+    box-shadow: 1px 1px 6px var(--granite-gray);
 
 }
 
