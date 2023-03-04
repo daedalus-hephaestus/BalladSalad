@@ -211,6 +211,8 @@ app.post('/forgot', async (req, res) => {
 
     }
 
+    console.log(user);
+
     if (!user) { // if no user is found
 
         return res.redirect('/login'); // redirec to the login page
