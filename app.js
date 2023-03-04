@@ -17,8 +17,17 @@ const authStatic = express.static(`${__dirname}/private`, { extensions: ['html']
 
 const MongoDBSession = require('connect-mongodb-session')(session);
 const mongoose = require('mongoose');
+const { datamigration_v1 } = require('googleapis');
 const mongoURI = 'mongodb://localhost:27017/poetry';
 mongoose.connect(mongoURI);
+
+const poems = part.file_to_object(`${__dirname}/server/meters`);
+
+for (let i in poems) {
+
+    poems[i].form = new part.Poem(14, '0101010101', 'ABBAABBACDECDE');
+
+}
 
 const db = mongoose.connection; // connects to the database
 db.on('error', (error) => { // if the connection fails
@@ -210,7 +219,7 @@ app.post('/forgot', async (req, res) => {
         user = await User.findOne({ email_case: username });
 
     }
-    
+
     if (!user) { // if no user is found
 
         return res.redirect('/login'); // redirec to the login page
@@ -290,11 +299,6 @@ app.post('/new_password', async (req, res) => {
 
 });
 
-//let PetrarchanSonnet = new part.Poem(14, '0101010101', 'ABBAABBACDECDE');
-//let ShakespereanSonnet = new part.Poem(14, '0101010101', 'ABABCDCDEFEFGG');
-//let SpensereanSonnet = new part.Poem(14, '0101010101', 'ABABBCBCCDCDEE');
-//let Limerick = new part.Poem(5, ['0100100100', '00100100100', '001001', '01001', '00100100100'], 'AABBA');
-
 io.use((socket, next) => {
 
     sessionMiddleware(socket.request, socket.request.res || {}, next);
@@ -304,9 +308,16 @@ io.sockets.on('connection', (socket) => {
 
     const s = socket.request.session; // gets the session information
 
-    socket.on('test', async (data) => {
+    socket.on('get_types', () => {
 
-        // console.log(await ShakespereanSonnet.check(data.line));
+        socket.emit('poetry_types', poems);
+
+    });
+    socket.on('test_poem', async (data) => {
+
+        let errors = await poems[data.meter].form.check(data.line);
+
+        socket.emit('errors', errors);
 
     });
     socket.on('check_email', async (data) => { // the client checking an email's availability

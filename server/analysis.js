@@ -355,4 +355,30 @@ Poem.prototype.check = async function (poem) {
 
 };
 
-module.exports = { Word, Line, Poem };
+function file_to_object(path) {
+
+    var res = {};
+    var a = fs.readdirSync(path);
+
+    for (var b of a) {
+
+        var s = fs.lstatSync(`${path}/${b}`);
+
+        if (s.isDirectory()) {
+
+            res[b] = file_to_object(`${path}/${b}`);
+
+        } else {
+
+            var json = JSON.parse(fs.readFileSync(`${path}/${b}`));
+            res[json.name] = json;
+
+        }
+
+    }
+
+    return res;
+
+}
+
+module.exports = { Word, Line, Poem, file_to_object };
