@@ -231,7 +231,7 @@ app.post('/forgot', async (req, res) => {
         await reset.save(); // saves the reset entry
 
         // sends an email with the reset link
-        mail(`Password reset for ${user.email_case}`, `Please click on this link to reset your password: http://localhost:8080/reset/${id}`, user.email_case);
+        mail(`Password reset for ${user.email_case}`, `Please click on this link to reset your password: https://balladsalad.com/reset/${id}`, user.email_case);
         
         return res.redirect('/login');
 
