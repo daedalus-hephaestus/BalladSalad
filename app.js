@@ -10,7 +10,7 @@ const uuid = require('uuid'); // generates uuids for password resets
 
 const part = require(`./server/analysis`); // the poetry library
 const mail = require(`./server/mailer.js`);
-const { User } = require('./server/models.js');
+const { User, Reset } = require('./server/models.js');
 
 const unauthStatic = express.static(`${__dirname}/public`, { extensions: ['html'] });
 const authStatic = express.static(`${__dirname}/private`, { extensions: ['html'] });
@@ -87,6 +87,31 @@ app.get('/login', (req, res) => {
     res.sendFile(`${__dirname}/public/html/login.html`);
 
 });
+app.get('/forgot', (req, res) => {
+
+    res.sendFile(`${__dirname}/public/html/forgot.html`);
+
+});
+app.get('/incorrect', (req, res) => {
+
+    res.sendFile(`${__dirname}/public/html/login.html`);
+
+});
+app.get('/reset/:id', async (req, res) => {
+
+    const id = req.params.id; // pulls the uuid from the email link
+
+    let reset = await Reset.findOne({ id }); // checks if the uuid is in the reset database
+
+    if (!reset) { // if this reset request doesn't exist
+
+        return res.redirect('/'); // sends the user back to the home page
+
+    }
+
+    res.sendFile(`${__dirname}/public/html/reset.html`);
+
+});
 app.get('/register', (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/register.html`);
@@ -95,6 +120,11 @@ app.get('/register', (req, res) => {
 app.get('/dashboard', isAuth, (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/register.html`);
+
+});
+app.get('/privacy', (req, res) => {
+
+    res.sendFile(`${__dirname}/public/html/privacy.html`);
 
 });
 
@@ -110,7 +140,7 @@ app.post('/create_account', async (req, res) => {
 
     }
 
-    user = await User.findOne({ username });
+    user = await User.findOne({ username_case: username.toLowerCase() });
 
     if (user) {
 
@@ -125,6 +155,8 @@ app.post('/create_account', async (req, res) => {
 
         email: email,
         username: username,
+        email_case: email.toLowerCase(),
+        username_case: username.toLowerCase(),
         password: hash,
         id: id
 
@@ -137,13 +169,45 @@ app.post('/create_account', async (req, res) => {
 });
 app.post('/login', async (req, res) => {
 
-    const { username, password } = req.body; // gets the user's email and password from the inputs
+    const username = req.body.username.toLowerCase();
+    const password = req.body.password;
 
-    let user = await User.findOne({ username }); // finds the user in the database
+    let user = await User.findOne({ username_case: username }); // finds the user in the database
 
     if (!user) {
 
-        user = await User.findOne({ email: username });
+        user = await User.findOne({ email_case: username });
+
+    }
+
+    if (!user) { // if no user is found
+
+        return res.redirect('/incorrect'); // redirec to the login page
+
+    }
+
+    let isMatch = await bcrypt.compare(password, user.password); // bcrypt encrypts the password and compares the hashes
+
+    if (!isMatch) { // if the passwords don't match
+
+        return res.redirect('/incorrect'); // redirec to the login page
+
+    }
+
+    req.session.isAuth = true; // authorizes the user
+    req.session.username = user.username_case; // saves the user's email in the session
+    res.redirect('/dashboard'); // redirects to the dashboard
+
+});
+app.post('/forgot', async (req, res) => {
+
+    const username = req.body.username.toLowerCase();
+
+    let user = await User.findOne({ username_case: username }); // finds the user in the database
+
+    if (!user) {
+
+        user = await User.findOne({ email_case: username });
 
     }
 
@@ -153,17 +217,25 @@ app.post('/login', async (req, res) => {
 
     }
 
-    let isMatch = await bcrypt.compare(password, user.password); // bcrypt encrypts the password and compares the hashes
+    if (user) { // if the user exists
 
-    if (!isMatch) { // if the passwords don't match
+        let id = await uuid.v1(); // generates a uuid
 
-        return res.redirect('login'); // redirec to the login page
+        let reset = new Reset({ // creates a new password reset entry in the database
+
+            email: user.email_case,
+            id: id
+
+        });
+
+        await reset.save(); // saves the reset entry
+
+        // sends an email with the reset link
+        mail(`Password reset for ${user.email_case}`, `Please click on this link to reset your password: http://localhost:8080/reset/${id}`, user.email_case);
+        
+        return res.redirect('/login');
 
     }
-
-    req.session.isAuth = true; // authorizes the user
-    req.session.username = user.username; // saves the user's email in the session
-    res.redirect('/dashboard'); // redirects to the dashboard
 
 });
 app.post('/logout', async (req, res) => {
@@ -179,6 +251,42 @@ app.post('/logout', async (req, res) => {
         res.redirect('/');
 
     });
+
+});
+app.post('/new_password', async (req, res) => {
+
+    const { email, password, id } = req.body; // gets the email, new password, and uuid from the body
+
+    let reset = await Reset.findOne({ id }); // checks to see if a request exists with the same idea
+
+    if (!reset) { // if a request doesn't exist
+
+        return res.redirect('/login'); // redirect to the homepage
+
+    }
+
+    if (reset.email === email.toLowerCase()) { // if the email in the database is the same as the one sent
+
+        let user = await User.findOne({
+
+            email_case: email.toLowerCase()
+        
+        }); // finds the user with that email
+
+        const hash = await bcrypt.hash(password, 12); // encrypts the new password
+
+        user.password = hash; // updates the users password
+
+        reset.delete(); // deletes the reset entry from the database
+        user.save(); // saves the user
+
+        return res.redirect('/login'); // redirects the user to the login page
+
+    } else {
+
+        return res.redirect('/login'); // redirects to the homepage
+
+    }
 
 });
 
@@ -203,7 +311,7 @@ io.sockets.on('connection', (socket) => {
     });
     socket.on('check_email', async (data) => { // the client checking an email's availability
 
-        const email = data; // the email address
+        const email = data.toLowerCase(); // the email address
         let user = await User.findOne({ email }); // searches the users to see if the email is in use
 
         if (user) { // if the email is in use
@@ -219,8 +327,8 @@ io.sockets.on('connection', (socket) => {
     });
     socket.on('check_username', async (data) => { // the client checking a username's availability
 
-        const username = data; // the username
-        let user = await User.findOne({ username }); // searches the users to see if the username is in use
+        const username = data.toLowerCase(); // the username
+        let user = await User.findOne({ username_case: username }); // searches the users to see if the username is in use
 
         if (user) { // if the username is in use
 

@@ -102,6 +102,23 @@ body {
 
 }
 
+.link {
+
+    font-family: 'Lora';
+    font-size: 16px;
+    text-align: center;
+    color: var(--red-salsa);
+
+}
+.link_container {
+
+    margin: 0 auto;
+    position: absolute;
+    bottom: 15px;
+    text-align: center;
+    width:99%;
+
+}
 .select {
 
     width: 175px;
@@ -115,6 +132,14 @@ body {
 .button:hover {
 
     background-color: var(--granite-gray);
+
+}
+
+.incorrect {
+
+    font-family: 'Lora';
+    font-size: 14px;
+    color: var(--red-salsa);
 
 }
 

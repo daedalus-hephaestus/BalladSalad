@@ -17,6 +17,20 @@ const UserSchema = new Schema({
         unique: true
 
     },
+    username_case: {
+
+        type: String,
+        required: true,
+        unique: true
+
+    },
+    email_case: {
+
+        type: String,
+        required: true,
+        unique: true
+
+    },
     password: {
 
         type: String,
@@ -27,4 +41,29 @@ const UserSchema = new Schema({
 });
 const User = mongoose.model('User', UserSchema); // second argument determines collection name
 
-module.exports = { User };
+const ResetSchema = new Schema({
+
+    email: {
+
+        type: String,
+        required: true,
+
+    },
+    createdAt: {
+
+        type: Date,
+        default: Date.now(),
+        expires: 300
+
+    },
+    id: {
+
+        type: String,
+        required: true
+
+    }
+
+});
+const Reset = mongoose.model('Reset', ResetSchema);
+
+module.exports = { User, Reset };
