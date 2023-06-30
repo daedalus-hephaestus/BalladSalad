@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ballad Salad</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <input id="title" class="title_input" placeholder="title">
+        <br>
+        <textarea class="poem_input" id="poem_input" placeholder=". . ."></textarea>
+        <br>
+        <br>
+        <select id="meter" class="select"></select><input class="button" type="button" value="Publish" id="test">
+        <br>
+        <p id="output" class="post" hidden></p>
+    </div>
+    <script src="/js/poem_creator.js"></script>
+</body>
+
+</html>

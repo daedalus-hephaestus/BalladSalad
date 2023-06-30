@@ -4,29 +4,28 @@
 <head>
     <title>Ballad Salad</title>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/moment.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 
 <body>
     <div class="container">
-        <form method="POST" action="/logout">
+        <h2 id="name_display" class="name_display"></h2>
+        <form method="POST" action="/logout" style="text-align: right;">
             <input type="submit" value="logout" class="button">
         </form>
-        <br>
-        <select id="meter" class="select">
-            
+        <hr>
+        Sort by
+        <select id="filter" class="post_filter">
+            <option value="recent">recent</option>
+            <option value="liked">liked</option>
         </select>
-        <br>
-        <br>
-        <textarea class="poem_input" id="line"></textarea>
-        <br>
-        <br>
-        <input class="button" type="button" value="Test" id="test">
-        <br>
-        <br>
-        <p id="output"></p>
-        <script src="/js/dashboard.js"></script>
+        <div id="content"></div>
     </div>
+    <script src="/js/dashboard.js"></script>
 </body>
 
 </html>
+
+<!DOCTYPE html>
+<html>

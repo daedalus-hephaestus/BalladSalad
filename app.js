@@ -10,7 +10,7 @@ const uuid = require('uuid'); // generates uuids for password resets
 
 const part = require(`./server/analysis`); // the poetry library
 const mail = require(`./server/mailer.js`);
-const { User, Reset } = require('./server/models.js');
+const { User, Reset, Post } = require('./server/models.js');
 
 const unauthStatic = express.static(`${__dirname}/public`, { extensions: ['html'] });
 const authStatic = express.static(`${__dirname}/private`, { extensions: ['html'] });
@@ -23,9 +23,19 @@ mongoose.connect(mongoURI);
 
 const poems = part.file_to_object(`${__dirname}/server/meters`);
 
+let poem_lists = {
+
+    recent: [],
+    liked: [],
+    hot: []
+
+};
+
+refresh_lists();
+
 for (let i in poems) {
 
-    poems[i].form = new part.Poem(14, '0101010101', 'ABBAABBACDECDE');
+    poems[i].form = new part.Poem(poems[i].lines, poems[i].meter, poems[i].rhymescheme);
 
 }
 
@@ -76,7 +86,7 @@ app.use((req, res, next) => {
 
     if (req.session.isAuth) {
 
-       authStatic(req, res, next);
+        authStatic(req, res, next);
 
     } else {
 
@@ -121,6 +131,27 @@ app.get('/reset/:id', async (req, res) => {
     res.sendFile(`${__dirname}/public/html/reset.html`);
 
 });
+app.get('/account/:user', async (req, res) => {
+
+    const username = req.params.user;
+
+    let user = await User.findOne({ username_case: username });
+
+    if (req.session.username === username) {
+
+        res.redirect('/dashboard');
+
+    }
+
+    if (!user) {
+
+        return res.sendFile(`${__dirname}/public/html/account_not_found.html`);
+
+    }
+
+    res.sendFile(`${__dirname}/public/html/account.html`);
+
+});
 app.get('/register', (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/register.html`);
@@ -129,6 +160,11 @@ app.get('/register', (req, res) => {
 app.get('/dashboard', isAuth, (req, res) => {
 
     res.sendFile(`${__dirname}/public/html/register.html`);
+
+});
+app.get('/poem_creator', isAuth, (req, res) => {
+
+    res.sendFile(`${__dirname}/public/html/poem_creator.html`);
 
 });
 app.get('/privacy', (req, res) => {
@@ -241,7 +277,7 @@ app.post('/forgot', async (req, res) => {
 
         // sends an email with the reset link
         mail(`Password reset for ${user.email_case}`, `Please click on this link to reset your password: https://balladsalad.com/reset/${id}`, user.email_case);
-        
+
         return res.redirect('/login');
 
     }
@@ -279,7 +315,7 @@ app.post('/new_password', async (req, res) => {
         let user = await User.findOne({
 
             email_case: email.toLowerCase()
-        
+
         }); // finds the user with that email
 
         const hash = await bcrypt.hash(password, 12); // encrypts the new password
@@ -308,6 +344,13 @@ io.sockets.on('connection', (socket) => {
 
     const s = socket.request.session; // gets the session information
 
+    socket.on('get_username', () => {
+
+        socket.emit('username', s.username);
+        console.log(s.username);
+    });
+    
+
     socket.on('get_types', () => {
 
         socket.emit('poetry_types', poems);
@@ -315,7 +358,44 @@ io.sockets.on('connection', (socket) => {
     });
     socket.on('test_poem', async (data) => {
 
+        console.log(data);
         let errors = await poems[data.meter].form.check(data.line);
+
+        console.log(errors);
+
+        let meter_errors = 0;
+        let rhyme_errors = 0;
+        let publishable = true;
+
+        for (let e of errors) {
+
+            if (e.reason === 'line_number' || e.reason === 'word' || e.reason === 'count') {
+
+                publishable = false;
+
+            } else if (e.reason === 'rhyme') {
+
+                rhyme_errors++;
+
+            } else if (e.reason === 'meter') {
+
+                meter_errors++;
+
+            }
+
+        }
+
+        if (rhyme_errors > 3 || meter_errors > 3) {
+
+            publishable = false;
+
+        }
+
+        if (publishable) {
+
+            post_poem(data.title, s.username, data.line, data.meter);
+
+        }
 
         socket.emit('errors', errors);
 
@@ -352,8 +432,197 @@ io.sockets.on('connection', (socket) => {
         }
 
     });
+    socket.on('get_poems', async (data) => {
+
+        socket.emit('poem_list', {
+
+            list: poem_lists[data.type].slice(data.index, 10),
+
+        });
+
+    });
+    socket.on('user_poems', async (data) => {
+
+        let user = await User.findOne({ username_case: data.user });
+
+        if (!user) {
+
+            return;
+
+        }
+
+        let posts;
+
+        if (data.type === 'liked') {
+
+            posts = await Post.find({ user: data.user }, null, { sort: { likes: -1 } });
+
+        } else {
+
+            posts = await Post.find({ user: data.user }, null, { sort: { date: -1 } });
+
+        }
+
+        if (!posts) {
+
+            return;
+
+        }
+
+        socket.emit('user_poems', { posts: posts, username: user.username });
+
+    });
+    socket.on('poem_feedback', async (data) => {
+
+        if (s.username) {
+
+            let id = data.id;
+            let value = data.value;
+
+            let user = await User.findOne({ username_case: s.username });
+
+            if (!user) {
+
+                return;
+
+            }
+
+            likeable = user.liked_poems;
+            dislikeable = user.disliked_poems;
+
+            let poem = await Post.findOne({ id: id });
+
+            if (!poem) {
+
+                return;
+
+            }
+
+            if (user.username === poem.user) {
+
+                return;
+
+            }
+
+            if (likeable.includes(id)) {
+
+                let index = likeable.indexOf(id);
+                user.liked_poems.splice(index, 1);
+                poem.likes--;
+
+            } else if (value > 0) {
+
+                poem.likes += value;
+                likeable.push(id);
+
+            }
+
+            if (dislikeable.includes(id)) {
+
+                let index = dislikeable.indexOf(id);
+                user.disliked_poems.splice(index, 1);
+                poem.dislikes--;
+
+            } else if (value < 0) {
+
+                poem.dislikes -= value;
+                dislikeable.push(id);
+
+            }
+
+            await poem.save();
+            await user.save();
+
+            socket.emit('update_feedback', {
+
+                id: id,
+                likes: poem.likes,
+                dislikes: poem.dislikes
+
+            });
+            refresh_lists();
+
+        } else {
+
+            return;
+
+        }
+
+    });
 
 });
+
+async function post_poem(title, user, text, meter) {
+
+    let id = await uuid.v1();
+
+    while (await Post.findOne({ id })) {
+
+        id = await uuid.v1();
+
+    }
+
+    let user_data = await User.findOne({ username_case: user });
+
+    if (!user_data) {
+
+        return;
+
+    }
+
+    user_data.posts.unshift(id);
+    user_data.save();
+
+    let data = {
+
+        id: id,
+        title: title,
+        user: user,
+        meter: meter,
+        text: text,
+        date: Date.now()
+
+    };
+
+    poem_lists.recent.unshift(data);
+
+    let final = new Post(data);
+
+    await final.save();
+
+    refresh_lists();
+
+};
+
+async function refresh_lists() {
+
+    final = {
+
+        recent: [],
+        liked: [],
+        hot: []
+
+    };
+
+    let posts = await Post.find(null, null, { sort: { likes: -1 } });
+
+    for (let i of posts) {
+
+        final.liked.push(i);
+
+    }
+
+    posts.sort((a, b) => {
+
+        return b.date - a.date;
+
+    });
+
+    final.recent = posts;
+
+    poem_lists = final;
+
+}
 
 if (module === require.main) {
 

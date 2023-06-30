@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Poetry</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/moment.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2 id="name_display" class="name_display"></h2>
+        <hr>
+        Sort by
+        <select id="filter" class="post_filter">
+            <option value="recent">recent</option>
+            <option value="liked">liked</option>
+        </select>
+        <div id="content"></div>
+    </div>
+    <script src="/js/account.js"></script>
+</body>
+
+</html>

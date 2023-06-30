@@ -36,7 +36,22 @@ const UserSchema = new Schema({
         type: String,
         required: true
 
-    }
+    },
+    posts: {
+
+        type: [String]
+
+    },
+    liked_poems: {
+
+        type: [String]
+
+    },
+    disliked_poems: {
+
+        type: [String]
+
+    },
 
 });
 const User = mongoose.model('User', UserSchema); // second argument determines collection name
@@ -66,4 +81,58 @@ const ResetSchema = new Schema({
 });
 const Reset = mongoose.model('Reset', ResetSchema);
 
-module.exports = { User, Reset };
+const PostSchema = new Schema({
+
+    date: {
+
+        type: Date,
+        required: true
+
+    },
+    id: {
+
+        type: String,
+        required: true
+
+    },
+    user: {
+
+        type: String,
+        required: true
+
+    },
+    title: {
+
+        type: String,
+        required: true
+
+    },
+    text: {
+
+        type: String,
+        required: true
+
+    },
+    meter: {
+
+        type: String,
+        required: true
+
+    },
+    likes: {
+
+        type: Number,
+        default: 0
+
+    },
+    dislikes: {
+
+        type: Number,
+        default: 0
+
+    }
+
+});
+const Post = mongoose.model('Post', PostSchema);
+
+module.exports = { User, Reset, Post };

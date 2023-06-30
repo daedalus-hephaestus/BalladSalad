@@ -1,12 +1,94 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
+const { detectExtension } = require('nodemailer/lib/mime-funcs/mime-types');
 const stress_dict = JSON.parse(fs.readFileSync('server/data/compiled.json', 'utf8'));
 
 const Word = function (word) {
 
-    this.word = word.toLowerCase();
-    this.stresses = this.get_stress();
-    this.syllables = this.get_syllable();
+    this.word = word.toLowerCase(); // forces the word to be a lower case
+    this.stresses = [];
+    this.syllables = [];
+    this.get_info();
+
+    this.variant = false; // if the word has multiple pronunciations
+
+    if (this.syllables && this.syllables.length > 1) { // if there are variants
+
+        // removes duplicate syllable counts inside the array
+        let temp = [];
+
+        let b = this.syllables.filter((v) => {
+
+            if (temp.indexOf(v.toString()) < 0) {
+
+                temp.push(v.toString());
+                return v;
+
+            }
+
+        });
+
+        this.syllables = b; // stores the new array
+
+    }
+
+    if (this.syllables) { // if it is a word
+
+        // if there is only 1 variant
+        if (this.syllables.length === 1 && Array.isArray(this.syllables)) {
+
+            // set the array to equal the only element
+            this.syllables = this.syllables[0];
+
+        } else { // if there are multiple variants
+
+            this.variant = true; // sets that this word is a variant
+
+        }
+
+    }
+
+    if (this.stresses && this.stresses.length > 1) { // if there are variant stresses
+
+        // removes duplicate stresses inside the array
+        let temp = [];
+
+        let b = this.stresses.filter((v) => {
+
+            if (temp.indexOf(v.toString()) < 0) {
+
+                temp.push(v.toString());
+                return v;
+
+            }
+
+        });
+
+        this.stresses = b; // stores the new array
+
+    }
+
+    if (this.stresses) { // if it is a word
+
+        // if there is only 1 variant or the word is only 1 syllable
+        if ((this.stresses.length === 1 && Array.isArray(this.stresses)) || this.syllables == 1) {
+
+            // sets the array to equal the only element
+            this.stresses = this.stresses[0];
+
+        } else { // if there are multiple variants
+
+            this.variant = true; // sets that this word is a variant
+
+        }
+
+    }
+
+    if (this.variant) {
+
+        //console.log(this);
+
+    }
 
 };
 Word.prototype.get_rhymes = async function () { // gets a list of all words that rhyme with the given word
@@ -34,32 +116,29 @@ Word.prototype.check_rhymes = async function (b) { // checks if two words rhyme
     return false;
 
 }
-Word.prototype.get_stress = function () {
+Word.prototype.get_info = function () {
 
     let up = this.word.toUpperCase();
 
-    if (stress_dict[up]) {
+    if (stress_dict[up]) { // checks if the word is in the stress dictionary
 
-        return stress_dict[up].stresses;
+        let i = 1; // sets the index to check for variants
+        this.stresses = [stress_dict[up].stresses]; // sets the variant of stresses
+        this.syllables = [stress_dict[up].syllables]; // sets the variant of syllables
 
-    } else {
+        while (stress_dict[`${up}(${i})`] !== undefined) { // adds each variant to the array
 
-        return false;
+            this.stresses.push(stress_dict[`${up}(${i})`].stresses);
+            this.syllables.push(stress_dict[`${up}(${i})`].syllables);
+            i++; // increments to check for new variants
 
-    }
-
-};
-Word.prototype.get_syllable = function () {
-
-    let up = this.word.toUpperCase();
-
-    if (stress_dict[up]) {
-
-        return stress_dict[up].syllables;
+        }
 
     } else {
 
-        return false;
+        // if the word was not found
+        this.stresses = false;
+        this.syllables = false;
 
     }
 
@@ -68,7 +147,9 @@ Word.prototype.get_syllable = function () {
 const Line = function (line) {
 
     this.line = line.toLowerCase();
-    this.line = this.line.replace(/[.,/#!$%?`^&*’;:{}=_`~()]/g, ""); // removes all special characters
+    this.line = this.line.replace(/[`’]/g, "\'");
+    this.line = this.line.replace(/[-]/g, ' ');
+    this.line = this.line.replace(/[^a-zA-Z0-9 ']/g, ''); // removes all special characters
     this.line = this.line.replace(/  +/g, " "); // removes spaces bigger than 2
 
     this.arr = this.line.split(/[ —-]/); // splits the phrase at dashes, hyphens, and spaces
@@ -92,104 +173,99 @@ const Line = function (line) {
 }
 Line.prototype.meter_check = function (meter) {
 
-    let allowed_syllables = meter.length;
-    let total_syllables = 0;
-    let real_meter = ''; // the exact meter of the line
-    let adjusted_meter = ''; // the line adjusted to forgive single syllable words in an attempt to match the meter
+    if (meter === undefined) {
 
-    let errors = [];
-    let word_not_found = false;
-    let too_many_syllables = false;
+        return [];
 
-    for (let i = 0; i < this.arr.length; i++) {
+    }
 
-        if (this.arr[i].syllables) { // checks to make sure there is a syllable count
+    let variant_indexes = [];
+    let cycles = 1;
 
-            total_syllables += this.arr[i].syllables; // increments the total syllables by the word amount
+    for (let i = 0; i < this.arr.length; i++) { // loops through all the words
 
-        } else { // if the word is not found in the meter dictionary
+        if (!this.arr[i].stresses || !this.arr[i].syllables) { // if the word is not in the stress dictionary
 
-            errors.push({
+            return [{
 
                 reason: 'word',
                 word: this.arr[i].word
 
-            });
-
-            word_not_found = true;
+            }];
 
         }
 
-    }
+        if (this.arr[i].variant) { // checks for variants
 
-    if (total_syllables !== allowed_syllables && !word_not_found) {
 
-        too_many_syllables = true;
+            let t;
 
-        errors.push({
+            if (Array.isArray(this.arr[i].syllables)) { // checks to see if it has syllable variants
 
-            reason: 'count',
-            allowed: allowed_syllables,
-            total: total_syllables
+                t = this.arr[i].syllables.length; // adds the number of syllable variants
 
-        });
+            } else if (Array.isArray(this.arr[i].stresses)) {
 
-    }
-
-    let current_syllable = 0; // stores the current syllable being tested
-
-    for (let i = 0; i < this.arr.length; i++) {
-
-        if (this.arr[i].syllables) { // checks to make sure there is a syllable count
-
-            for (let s of this.arr[i].stresses) { // loops through the stresses
-
-                real_meter += s; // adds the exact stress to the "real stress" string
-
-            }
-
-            if (this.arr[i].stresses.length <= 1) { // if there is only one syllable
-
-                if (meter[current_syllable] !== undefined) {
-
-                    adjusted_meter += meter[current_syllable]; // adjusts single syllable words to fit meter
-
-                } else {
-
-                    let s = this.arr[i].stresses[0];
-
-                    if (s > 1) { // if the stress is a secondary stress
-
-                        s = 1; // force primary stress
-
-                    }
-
-                    adjusted_meter += s; // adds the stress to the adjusted meter
-
-                }
-
-                current_syllable++; // increments the syllable counter
+                t = this.arr[i].stresses.length;
 
             } else {
 
-                for (let s of this.arr[i].stresses) { // if there are multiple stresses
+                t = 1; // sets the number of syllable variants to 1
 
-                    if (s > 1) { // if the stress is a secondary stress
+            }
 
-                        if (meter[current_syllable] !== undefined) {
+            variant_indexes.push({
 
-                            s = meter[current_syllable]; // adjusts single syllable words to fit meter
+                index: i,
+                amount: t
 
-                        } else {
+            });
 
-                            s = 1;
+            cycles *= t;
 
-                        }
+        }
 
-                    }
+    }
 
-                    adjusted_meter += s; // adds the stress to the adjusted meter
-                    current_syllable++; // increments the syllable
+
+    let schema = [];
+    let error_iteration;
+
+    for (let i = 0; i < cycles; i++) {
+
+        let vc = 0;
+
+        schema[i] = [];
+
+        for (let j = 0; j < variant_indexes.length; j++) {
+
+            let a = variant_indexes[j].amount;
+            schema[i][j] = Math.floor(i / ((Math.pow(a, j)))) % a;
+
+        }
+
+        let detected_meter = '';
+
+        for (let w of this.arr) {
+
+            if (w.variant) { // if the word is a variant, use the schema
+
+                detected_meter += w.stresses[schema[i][vc]].join('');
+                vc++;
+
+            } else {
+
+                let expected = meter[detected_meter.length];
+
+                // if the word is 1 syllable long
+                if (w.syllables < 2 && expected) {
+
+                    // sets the stress to fit the meter
+                    detected_meter += expected;
+
+                } else { // if the line is beyond the meter
+
+                    detected_meter += w.stresses.join('');
 
                 }
 
@@ -197,32 +273,57 @@ Line.prototype.meter_check = function (meter) {
 
         }
 
+        for (let j = 0; j < detected_meter.length; j++) {
+
+            let expected = meter[detected_meter.length];
+
+            if (detected_meter[j] === '2' && expected) {
+
+                detected_meter = `${detected_meter.substring(0, j)}${expected}${detected_meter.substring(j + 1)}`;
+
+            } else if (detected_meter[j] === '2') {
+
+                detected_meter = `${detected_meter.substring(0, j)}1${detected_meter.substring(j + 1)}`;
+
+            }
+
+        }
+
+        if (detected_meter === meter) {
+
+            return true;
+
+        } else if (detected_meter.length === meter.length || i === 0) {
+
+            error_iteration = detected_meter;
+
+        }
+
     }
 
-    if (adjusted_meter !== meter && !word_not_found && !too_many_syllables) {
+    if (error_iteration.length !== meter.length) {
 
-        errors.push({
+        return [{
 
-            reason: 'meter',
-            required: meter,
-            real: real_meter,
-            adjusted: adjusted_meter
+            reason: 'count',
+            allowed: meter.length,
+            total: error_iteration.length
 
-        });
-
-    }
-
-    if (errors.length <= 0) {
-
-        return true;
+        }];
 
     } else {
 
-        return errors;
+        return [{
+
+            reason: 'meter',
+            required: meter,
+            adjusted: error_iteration
+
+        }]
 
     }
 
-}
+};
 Line.prototype.rhymes_with = async function (line) {
 
     let last_word_a = this.arr[this.arr.length - 1];
@@ -237,8 +338,8 @@ Line.prototype.rhymes_with = async function (line) {
         if (!await last_word_a.check_rhymes(last_word_b.word)) {
 
             return {
-                
-                type: 'rhyme',
+
+                reason: 'rhyme',
                 a: last_word_a.word,
                 b: last_word_b.word
 
@@ -279,11 +380,10 @@ const Poem = function (line_number, meter, rhymescheme) {
 
         }
 
-        console.log(this.meter);
-
     }
 
     this.rhymescheme = rhymescheme;
+
 
 }
 Poem.prototype.check = async function (poem) {
@@ -310,7 +410,7 @@ Poem.prototype.check = async function (poem) {
 
         errors.push({
 
-            type: 'line_number',
+            reason: 'line_number',
             expected: this.line_number,
             actual: lines.length
 
@@ -350,7 +450,7 @@ Poem.prototype.check = async function (poem) {
         }
 
     }
-    
+
     return errors;
 
 };
@@ -380,5 +480,6 @@ function file_to_object(path) {
     return res;
 
 }
+
 
 module.exports = { Word, Line, Poem, file_to_object };

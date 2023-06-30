@@ -9,7 +9,7 @@ const oauth2Client = new OAuth2(
 );
 oauth2Client.setCredentials({
 
-    refresh_token: '1//04PNeVUXKmtAoCgYIARAAGAQSNwF-L9IrxYTRok4a_iS2P9xdc45MGI-455HopBhjo2sZ4k5vmXszPNxFS0Hw4TppkuPvcXMwWlM'
+    refresh_token: '***REMOVED***'
 
 });
 const accessToken = oauth2Client.getAccessToken();
@@ -20,7 +20,7 @@ const smtpTransport = nodemailer.createTransport({
         user: "daedalus.hephaestus@gmail.com",
         clientId: "***REMOVED***",
         clientSecret: "***REMOVED***",
-        refreshToken: "1//04PNeVUXKmtAoCgYIARAAGAQSNwF-L9IrxYTRok4a_iS2P9xdc45MGI-455HopBhjo2sZ4k5vmXszPNxFS0Hw4TppkuPvcXMwWlM",
+        refreshToken: "***REMOVED***",
         accessToken: accessToken,
         tls: {
 
