@@ -58,6 +58,7 @@ function calc_height(value) {
 
 }
 
+// displays errors
 function display_errors (data) {
 
     let errors = {
