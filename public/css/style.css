@@ -96,6 +96,7 @@ body {
     box-shadow: 6px 6px 5px var(--granite-gray);
 
 }
+
 .title_input:focus {
 
     outline: none;
@@ -160,14 +161,16 @@ body {
     transition: 0.4s;
 
 }
+
 .like_counter {
-    
+
     display: inline-block;
     text-align: center;
     margin-right: 15px;
     width: 25px;
 
 }
+
 .dislike_counter {
 
     display: inline-block;
@@ -229,6 +232,7 @@ body {
     box-shadow: 1px 1px 6px var(--granite-gray);
 
 }
+
 .select:focus {
 
     outline: none;
@@ -274,5 +278,22 @@ body {
 #line {
 
     width: 500px;
+
+}
+
+@media only screen and (max-width: 880px) {
+
+    body {
+
+        width: 96%;
+
+    }
+
+    .text_input {
+
+        width: 80%;
+    
+    
+    }
 
 }
