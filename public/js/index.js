@@ -1,5 +1,7 @@
 const socket = io();
 
+socket.emit('get_username');
+
 let content = document.getElementById('content');
 let filter = document.getElementById('filter');
 
@@ -41,13 +43,9 @@ Poem.prototype.render = function () {
 
     this.post.like_counter = elem('span', 'like_counter', `${this.id}_like_counter`, this.likes);
     this.post.dislike_counter = elem('span', 'dislike_counter', `${this.id}_dislike_counter`, this.dislikes);
-
     this.post.author = elem('a', 'link', '', this.user, `/account/${this.user}`);
-
     this.post.poem_container = elem('div', 'poem_container', '', '');
-
     this.post.poem = elem('p', 'poem', '', `${this.text.replace(/\n/g, "<br />")}`);
-
     this.post.container.appendChild(this.post.title);
 
     this.post.container.appendChild(this.post.author);
@@ -71,6 +69,17 @@ socket.emit('get_poems', {
 
 });
 
+
+socket.on('username', (data) => {
+
+    if (data) {
+
+        document.getElementById('login_button').value = "dashboard";
+
+    }
+
+});
+
 socket.on('poem_list', (data) => {
 
     load_poems(data.list);
@@ -83,6 +92,7 @@ socket.on('update_feedback', (data) => {
     document.getElementById(`${data.id}_dislike_counter`).innerHTML = data.dislikes;
 
 });
+
 
 filter.onchange = function () {
 

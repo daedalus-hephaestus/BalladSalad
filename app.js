@@ -350,7 +350,6 @@ io.sockets.on('connection', (socket) => {
 
     });
     
-
     socket.on('get_types', () => {
 
         socket.emit('poetry_types', poems);
