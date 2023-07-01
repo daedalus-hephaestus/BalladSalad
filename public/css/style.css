@@ -316,7 +316,13 @@ body {
 
     .poem_input {
 
-        width: 83%;
+        width: 85%;
+
+    }
+
+    .title_input {
+
+        width: 85%;
 
     }
 
