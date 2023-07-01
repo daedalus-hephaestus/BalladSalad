@@ -394,6 +394,7 @@ io.sockets.on('connection', (socket) => {
         if (publishable) {
 
             post_poem(data.title, s.username, data.line, data.meter);
+            socket.emit('poem_published');
 
         }
 

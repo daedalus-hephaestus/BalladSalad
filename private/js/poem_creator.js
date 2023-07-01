@@ -5,6 +5,7 @@ let options = document.getElementById('meter');
 let test = document.getElementById('test');
 let output = document.getElementById('output');
 let input = document.getElementById('poem_input');
+let title = document.getElementById('title');
 
 input.addEventListener("keyup", () => {
 
@@ -30,20 +31,36 @@ socket.on('poetry_types', (data) => {
 
 test.onclick = function () {
 
-    socket.emit('test_poem', {
+    output.hidden = true;
 
-        title: document.getElementById('title').value,
-        line: document.getElementById('poem_input').value,
-        meter: meter.value
+    if (title.value.length > 0) {
 
-    });
+        socket.emit('test_poem', {
+
+            title: document.getElementById('title').value,
+            line: document.getElementById('poem_input').value,
+            meter: meter.value
+
+        });
+
+    } else {
+
+        title.focus();
+
+    }
 
 };
 
 socket.on('errors', (data) => {
 
     display_errors(data);
-    
+
+});
+
+socket.on('poem_published', (data) => {
+
+    window.location.href = '/';
+
 });
 
 function calc_height(value) {
@@ -59,7 +76,7 @@ function calc_height(value) {
 }
 
 // displays errors
-function display_errors (data) {
+function display_errors(data) {
 
     let errors = {
 
@@ -103,10 +120,18 @@ function display_errors (data) {
 
             errors.rhyme += `\"${i.a}\" does not rhyme well with \"${i.b}\".<br><br>`;
         }
-        
+
     }
 
-    output.innerHTML = `${errors.line_number}${errors.dictionary}${errors.syllables}${errors.meter}${errors.rhyme}`;
-    output.hidden = false;
+    if (data.length > 0) {
+
+        output.innerHTML = `${errors.line_number}${errors.dictionary}${errors.syllables}${errors.meter}${errors.rhyme}`;
+        output.hidden = false;
+
+    } else {
+
+        output.hidden = true;
+
+    }
 
 }
