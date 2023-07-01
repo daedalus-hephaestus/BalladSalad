@@ -347,7 +347,7 @@ io.sockets.on('connection', (socket) => {
     socket.on('get_username', () => {
 
         socket.emit('username', s.username);
-        console.log(s.username);
+
     });
     
 
@@ -358,10 +358,7 @@ io.sockets.on('connection', (socket) => {
     });
     socket.on('test_poem', async (data) => {
 
-        console.log(data);
         let errors = await poems[data.meter].form.check(data.line);
-
-        console.log(errors);
 
         let meter_errors = 0;
         let rhyme_errors = 0;
@@ -548,6 +545,20 @@ io.sockets.on('connection', (socket) => {
             return;
 
         }
+
+    });
+    socket.on('delete_poem', async (data) => {
+
+        let poem = await Post.deleteOne({id: data, user: s.username});
+
+        if (!poem) {
+
+            return;
+
+        }
+
+        refresh_lists();
+        socket.emit('refresh_page');
 
     });
 

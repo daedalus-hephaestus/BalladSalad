@@ -2,7 +2,24 @@ const socket = io();
 
 let content = document.getElementById('content');
 let filter = document.getElementById('filter');
+let delete_modal = document.getElementById('delete_modal');
+
 let username;
+
+let saved_delete = '';
+
+document.getElementById('cancel').onclick = function () {
+
+    delete_modal.style.display = 'none';
+    saved_delete = '';
+
+};
+
+document.getElementById('delete').onclick = function () {
+
+    socket.emit('delete_poem', saved_delete);
+
+};
 
 let posts = {};
 
@@ -17,7 +34,6 @@ let Poem = function (title, user, likes, dislikes, text, id, date) {
     this.date = date;
     this.post = {};
 
-    console.log(this.id);
     posts[this.id] = this;
 
     this.render();
@@ -25,60 +41,42 @@ let Poem = function (title, user, likes, dislikes, text, id, date) {
 };
 Poem.prototype.render = function () {
 
-    this.post.container = document.createElement('div'); // create a paragraph element for each whitaker word
-    this.post.container.id = this.id; // sets the paragraph's id
-    this.post.container.className = 'post'; // sets the paragraph's class
+    this.post.container = elem('div', 'post', this.id, ''); 
+    this.post.title = elem('h2', 'post_title', '', this.title);
 
-    this.post.title = document.createElement('h2');
-    this.post.title.className = 'post_title';
-    this.post.title.appendChild(document.createTextNode(this.title));
-
-    this.post.like = document.createElement('img');
-    this.post.like.src = '/images/like.png';
-    this.post.like.className = 'feedback';
-    this.post.like.id = this.id;
-    this.post.like.onclick = function () {
+    this.post.like = elem('img', 'feedback', this.id, '', '/images/like.png', () => {
 
         socket.emit('poem_feedback', { id: this.id, value: 1 });
 
-    }
+    });
 
-    this.post.dislike = document.createElement('img');
-    this.post.dislike.src = '/images/dislike.png';
-    this.post.dislike.className = 'feedback';
-    this.post.dislike.id = this.id;
-    this.post.dislike.onclick = function () {
+    this.post.dislike = elem('img', 'feedback', this.id, '', '/images/dislike.png', () => {
 
         socket.emit('poem_feedback', { id: this.id, value: -1 });
 
-    }
+    });
 
-    this.post.like_counter = document.createElement('span');
-    this.post.like_counter.innerHTML = `${this.likes}`;
-    this.post.like_counter.className = 'like_counter';
-    this.post.like_counter.id = `${this.id}_like_counter`;
+    this.post.remove_poem = elem('img', 'remove_icon', this.id, '', '/images/trash.png', () => {
 
-    this.post.dislike_counter = document.createElement('span');
-    this.post.dislike_counter.innerHTML = `${this.dislikes}`;
-    this.post.dislike_counter.className = 'dislike_counter';
-    this.post.dislike_counter.id = `${this.id}_dislike_counter`;
+        saved_delete = this.id;
+        delete_modal.style.display = 'block';
 
-    this.post.author = document.createElement('a');
-    this.post.author.className = 'link';
-    this.post.author.href = `/account/${this.user}`;
-    this.post.author.appendChild(document.createTextNode(this.user));
+    });
 
-    this.post.poem_container = document.createElement('div');
-    this.post.poem_container.className = 'poem_container';
+    this.post.like_counter = elem('span', 'like_counter', `${this.id}_like_counter`, this.likes);
+    this.post.dislike_counter = elem('span', 'dislike_counter', `${this.id}_dislike_counter`, this.dislikes);
 
-    this.post.poem = document.createElement('p');
-    this.post.poem.className = 'poem';
-    this.post.poem.innerHTML = (`${this.text.replace(/\n/g, "<br />")}`);
+    this.post.author = elem('a', 'link', '', this.user, `/account/${this.user}`);
 
+    this.post.poem_container = elem('div', 'poem_container', '', '');
+
+    this.post.poem = elem('p', 'poem', '', `${this.text.replace(/\n/g, "<br />")}`);
+
+    this.post.container.appendChild(this.post.remove_poem);
+    this.post.container.appendChild(document.createElement('br'));
     this.post.container.appendChild(this.post.title);
-
     this.post.container.appendChild(this.post.author);
-    this.post.container.innerHTML += ` - ${convert_date(this.date)}`;
+    this.post.container.appendChild(document.createTextNode(` - ${convert_date(this.date)}`));
     this.post.poem_container.appendChild(this.post.poem);
     this.post.container.appendChild(this.post.poem_container);
     this.post.container.appendChild(this.post.like);
@@ -94,7 +92,6 @@ socket.emit('get_username');
 socket.on('username', (data) => {
 
     username = data;
-    console.log(data);
     socket.emit('user_poems', { user: data, type: filter.value });
 
 })
@@ -109,6 +106,12 @@ socket.on('user_poems', (data) => {
 
     document.getElementById('name_display').innerHTML = data.username;
     load_poems(data.posts);
+
+});
+
+socket.on('refresh_page', () => {
+
+    window.location.reload();
 
 });
 
@@ -135,5 +138,25 @@ function convert_date(date) {
     let final = moment(date).format('MMMM Do YYYY, h:mm a');
 
     return final;
+
+}
+
+function elem (type, className, id, innerHTML, src, click) {
+
+    let e = document.createElement(type);
+    e.className = className;
+    e.id = id;
+    e.innerHTML = innerHTML;
+    e.src = src;
+
+    if (type === 'a') {
+
+        e.href = src;
+
+    }
+
+    e.onclick = click;
+
+    return e;
 
 }
