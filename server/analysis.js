@@ -179,6 +179,14 @@ Line.prototype.meter_check = function (meter) {
 
     }
 
+    let only_syllables = false;
+
+    if (meter[0] === 'x') {
+
+        only_syllables = true;
+
+    }
+
     let variant_indexes = [];
     let cycles = 1;
 
@@ -289,7 +297,7 @@ Line.prototype.meter_check = function (meter) {
 
         }
 
-        if (detected_meter === meter) {
+        if (detected_meter === meter || (detected_meter.length === meter.length && only_syllables)) {
 
             return true;
 
@@ -433,17 +441,21 @@ Poem.prototype.check = async function (poem) {
 
         }
 
-        if (rhymes[this.rhymescheme[i]] === undefined) {
+        if (this.rhymescheme) {
 
-            rhymes[this.rhymescheme[i]] = lines[i];
+            if (rhymes[this.rhymescheme[i]] === undefined) {
 
-        } else {
+                rhymes[this.rhymescheme[i]] = lines[i];
 
-            let does_rhyme = await lines[i].rhymes_with(rhymes[this.rhymescheme[i]]);
+            } else {
 
-            if (does_rhyme !== true) {
+                let does_rhyme = await lines[i].rhymes_with(rhymes[this.rhymescheme[i]]);
 
-                errors.push(does_rhyme);
+                if (does_rhyme !== true) {
+
+                    errors.push(does_rhyme);
+
+                }
 
             }
 
