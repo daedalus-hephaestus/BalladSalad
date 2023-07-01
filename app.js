@@ -499,7 +499,7 @@ io.sockets.on('connection', (socket) => {
 
             }
 
-            if (user.username === poem.user) {
+            if (user.username_case === poem.user) {
 
                 return;
 
