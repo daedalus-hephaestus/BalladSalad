@@ -302,6 +302,12 @@ body {
     
     }
 
+    .container {
+
+        width: 85%;
+
+    }
+
     .post {
 
         width: 85%;
