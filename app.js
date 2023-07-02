@@ -35,7 +35,7 @@ refresh_lists();
 
 for (let i in poems) {
 
-    poems[i].form = new part.Poem(poems[i].lines, poems[i].meter, poems[i].rhymescheme);
+    poems[i].form = new part.Poem(poems[i].lines, poems[i].meter, poems[i].rhymescheme, poems[i].repeatable);
 
 }
 
@@ -389,8 +389,8 @@ io.sockets.on('connection', (socket) => {
 
         if (publishable) {
 
-            post_poem(data.title, s.username, data.line, data.meter);
-            socket.emit('poem_published');
+            //post_poem(data.title, s.username, data.line, data.meter);
+            //socket.emit('poem_published');
 
         }
 

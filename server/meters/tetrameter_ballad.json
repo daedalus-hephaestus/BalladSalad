@@ -1,0 +1,9 @@
+{
+
+    "name": "Tetrameter Ballad",
+    "lines": 4,
+    "repeatable": true,
+    "meter": "01010101",
+    "rhymescheme": ["ABAB", "ABCB", "AABB"] 
+
+}

@@ -363,10 +363,12 @@ Line.prototype.rhymes_with = async function (line) {
 
 };
 
-const Poem = function (line_number, meter, rhymescheme) {
+const Poem = function (line_number, meter, rhymescheme, repeatable) {
 
     this.line_number = line_number;
     this.meter = meter;
+
+    this.repeatable = repeatable;
 
     if (!Array.isArray(this.meter)) {
 
@@ -401,6 +403,7 @@ Poem.prototype.check = async function (poem) {
 
     let errors = [];
     let rhymes = {};
+    let scheme_errors = {};
 
     for (let i = 0; i < arr.length; i++) { // loops through the lines of the poem
 
@@ -414,7 +417,7 @@ Poem.prototype.check = async function (poem) {
 
     }
 
-    if (lines.length !== this.line_number) {
+    if (lines.length !== this.line_number && (lines.length % this.line_number !== 0 && this.repeatable)) {
 
         errors.push({
 
@@ -428,7 +431,7 @@ Poem.prototype.check = async function (poem) {
 
     for (let i = 0; i < lines.length; i++) {
 
-        let meter = await lines[i].meter_check(this.meter[i]);
+        let meter = await lines[i].meter_check(this.meter[i % this.line_number]);
 
         if (meter !== true) {
 
@@ -441,23 +444,101 @@ Poem.prototype.check = async function (poem) {
 
         }
 
-        if (this.rhymescheme) {
+        if (Array.isArray(this.rhymescheme)) {
 
-            if (rhymes[this.rhymescheme[i]] === undefined) {
+            for (let r of this.rhymescheme) {
 
-                rhymes[this.rhymescheme[i]] = lines[i];
+                if (rhymes[r] === undefined) {
 
-            } else {
+                    rhymes[r] = {};
+                    scheme_errors[r] = [];
 
-                let does_rhyme = await lines[i].rhymes_with(rhymes[this.rhymescheme[i]]);
+                }
 
-                if (does_rhyme !== true) {
+                if (i % this.line_number === 0 && this.repeatable) { // resets the saved rhymes if you have moved to the next verse
 
-                    errors.push(does_rhyme);
+                    rhymes[r] = {};
+
+                }
+
+                if (r) {
+
+                    if (rhymes[r][r[i % this.line_number]] === undefined) {
+
+                        rhymes[r][r[i % this.line_number]] = lines[i];
+
+
+                    } else {
+
+                        let does_rhyme = await lines[i].rhymes_with(rhymes[r][r[i % this.line_number]]);
+
+                        if (does_rhyme !== true) {
+
+                            scheme_errors[r].push(does_rhyme);
+
+                        }
+
+                    }
 
                 }
 
             }
+
+        } else {
+
+            if (i % this.line_number === 0 && this.repeatable) { // resets the saved rhymes if you have moved to the next verse
+
+                rhymes = {};
+
+            }
+
+            if (this.rhymescheme) {
+
+                if (rhymes[this.rhymescheme[i % this.line_number]] === undefined) {
+
+                    rhymes[this.rhymescheme[i % this.line_number]] = lines[i];
+
+                } else {
+
+                    let does_rhyme = await lines[i].rhymes_with(rhymes[this.rhymescheme[i % this.line_number]]);
+
+                    if (does_rhyme !== true) {
+
+                        errors.push(does_rhyme);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if (Array.isArray(this.rhymescheme)) {
+
+        let selection = false;
+
+        for (let i in scheme_errors) {
+
+            if (!selection) {
+
+                selection = scheme_errors[i];
+
+            }
+
+            if (scheme_errors[i].length < selection.length) {
+
+                selection = scheme_errors[i];
+
+            }
+
+        }
+
+        for (let i of selection) {
+
+            errors.push(i);
 
         }
 

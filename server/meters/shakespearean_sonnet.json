@@ -2,6 +2,7 @@
 
     "name": "Shakespearean Sonnet",
     "lines": 14,
+    "repeatable": false,
     "meter": "0101010101",
     "rhymescheme": "ABABCDCDEFEFGG" 
 

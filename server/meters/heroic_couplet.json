@@ -1,6 +1,7 @@
 {
 
     "name": "Heroic Couplet",
+    "repeatable": false,
     "lines": 2,
     "meter": ["0101010101", "0101010101"],
     "rhymescheme": "AA" 

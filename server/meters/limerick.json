@@ -2,6 +2,7 @@
 
     "name": "Limerick",
     "lines": 5,
+    "repeatable": false,
     "meter": ["0100100100", "00100100100", "001001", "01001", "00100100100"],
     "rhymescheme": "AABBA" 
 
