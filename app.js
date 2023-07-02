@@ -381,7 +381,7 @@ io.sockets.on('connection', (socket) => {
 
         }
 
-        if (rhyme_errors > 3 || meter_errors > 3) {
+        if (rhyme_errors > 3 || meter_errors > 6) {
 
             publishable = false;
 
