@@ -35,7 +35,13 @@ refresh_lists();
 
 for (let i in poems) {
 
-    poems[i].form = new part.Poem(poems[i].lines, poems[i].meter, poems[i].rhymescheme, poems[i].repeatable);
+    poems[i].form = new part.Poem(
+        poems[i].lines,
+        poems[i].meter,
+        poems[i].rhymescheme,
+        poems[i].repeatable,
+        poems[i].meter_errors,
+        poems[i].rhyme_errors);
 
 }
 
@@ -357,13 +363,22 @@ io.sockets.on('connection', (socket) => {
     });
     socket.on('test_poem', async (data) => {
 
-        let errors = await poems[data.meter].form.check(data.line);
+        let poem_data = poems[data.meter].form;
+        let test_poem = await poem_data.check(data.line);
 
-        let meter_errors = 0;
-        let rhyme_errors = 0;
+        let meter_errors = poem_data.meter_errors;
+        let rhyme_errors = poem_data.rhyme_errors;
+
+        if (poem_data.repeatable && test_poem.lines > poem_data.line_number) {
+
+            meter_errors *= Math.round(test_poem.lines / poem_data.line_number);
+            rhyme_errors *= Math.round(test_poem.lines / poem_data.line_number);
+
+        }
+
         let publishable = true;
 
-        for (let e of errors) {
+        for (let e of test_poem.errors) {
 
             if (e.reason === 'line_number' || e.reason === 'word' || e.reason === 'count') {
 
@@ -371,17 +386,17 @@ io.sockets.on('connection', (socket) => {
 
             } else if (e.reason === 'rhyme') {
 
-                rhyme_errors++;
+                rhyme_errors--;
 
             } else if (e.reason === 'meter') {
 
-                meter_errors++;
+                meter_errors--;
 
             }
 
         }
 
-        if (rhyme_errors > 3 || meter_errors > 6) {
+        if (rhyme_errors < 0 || meter_errors < 0) {
 
             publishable = false;
 
@@ -394,7 +409,7 @@ io.sockets.on('connection', (socket) => {
 
         }
 
-        socket.emit('errors', errors);
+        socket.emit('errors', test_poem.errors);
 
     });
     socket.on('check_email', async (data) => { // the client checking an email's availability

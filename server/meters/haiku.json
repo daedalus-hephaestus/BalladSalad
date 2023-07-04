@@ -4,6 +4,8 @@
     "repeatable": false,
     "lines": 3,
     "meter": ["xxxxx", "xxxxxxx", "xxxxx"],
-    "rhymescheme": false 
+    "rhymescheme": false,
+    "meter_errors": false,
+    "rhyme_errors": false
 
 }

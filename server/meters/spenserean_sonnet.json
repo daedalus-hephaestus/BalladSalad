@@ -4,6 +4,8 @@
     "lines": 14,
     "repeatable": false,
     "meter": "0101010101",
-    "rhymescheme": "ABABBCBCCDCDEE" 
+    "rhymescheme": "ABABBCBCCDCDEE" ,
+    "meter_errors": 4,
+    "rhyme_errors": 3
 
 }

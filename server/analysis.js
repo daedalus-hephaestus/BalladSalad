@@ -363,12 +363,14 @@ Line.prototype.rhymes_with = async function (line) {
 
 };
 
-const Poem = function (line_number, meter, rhymescheme, repeatable) {
+const Poem = function (line_number, meter, rhymescheme, repeatable, meter_errors, rhyme_errors) {
 
     this.line_number = line_number;
     this.meter = meter;
 
     this.repeatable = repeatable;
+    this.meter_errors = meter_errors;
+    this.rhyme_errors = rhyme_errors;
 
     if (!Array.isArray(this.meter)) {
 
@@ -544,7 +546,12 @@ Poem.prototype.check = async function (poem) {
 
     }
 
-    return errors;
+    return {
+
+        lines: lines.length,
+        errors: errors
+    
+    };
 
 };
 
