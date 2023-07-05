@@ -419,7 +419,11 @@ Poem.prototype.check = async function (poem) {
 
     }
 
-    if (lines.length !== this.line_number && (lines.length % this.line_number !== 0 && this.repeatable)) {
+    console.log(lines.length % this.line_number);
+
+    console.log((lines.length % this.line_number > 0 && this.repeatable));
+
+    if ((lines.length !== this.line_number && !this.repeatable) || (lines.length % this.line_number > 0 && this.repeatable)) {
 
         errors.push({
 
