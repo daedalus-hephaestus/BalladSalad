@@ -8,8 +8,9 @@ const bodyParser = require('body-parser'); // pulls values from html5 forms
 const bcrypt = require('bcryptjs'); // encrypts user passwords
 const uuid = require('uuid'); // generates uuids for password resets
 
+const hidden_data = require(`./server/hidden_data`);
 const part = require(`./server/analysis`); // the poetry library
-const mail = require(`./server/mailer.js`);
+const mail = require(`./server/mailer`);
 const { User, Reset, Post } = require('./server/models.js');
 
 const unauthStatic = express.static(`${__dirname}/public`, { extensions: ['html'] });
@@ -63,7 +64,7 @@ const store = new MongoDBSession({ // stores the express sessions so that users 
 });
 const sessionMiddleware = session({ // session middleware stores the session in the database
 
-    secret: 'dummy_secret',
+    secret: hidden_data.mongoose_secret,
     resave: false,
     saveUninitialized: false,
     store: store
