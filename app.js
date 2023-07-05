@@ -17,13 +17,12 @@ const authStatic = express.static(`${__dirname}/private`, { extensions: ['html']
 
 const MongoDBSession = require('connect-mongodb-session')(session);
 const mongoose = require('mongoose');
-const { datamigration_v1 } = require('googleapis');
 const mongoURI = 'mongodb://localhost:27017/poetry';
 mongoose.connect(mongoURI);
 
 const poems = part.file_to_object(`${__dirname}/server/meters`);
 
-let poem_lists = {
+let poem_lists = { // saves the lists of poems for quick display to the user
 
     recent: [],
     liked: [],
@@ -33,7 +32,7 @@ let poem_lists = {
 
 refresh_lists();
 
-for (let i in poems) {
+for (let i in poems) { // stores the different poem types for easy access
 
     poems[i].form = new part.Poem(
         poems[i].lines,
@@ -64,7 +63,7 @@ const store = new MongoDBSession({ // stores the express sessions so that users 
 });
 const sessionMiddleware = session({ // session middleware stores the session in the database
 
-    secret: '***REMOVED***',
+    secret: 'dummy_secret',
     resave: false,
     saveUninitialized: false,
     store: store
@@ -134,7 +133,7 @@ app.get('/reset/:id', async (req, res) => {
 
     }
 
-    res.sendFile(`${__dirname}/public/html/reset.html`);
+    return res.sendFile(`${__dirname}/public/html/reset.html`);
 
 });
 app.get('/account/:user', async (req, res) => {
@@ -355,7 +354,6 @@ io.sockets.on('connection', (socket) => {
         socket.emit('username', s.username);
 
     });
-
     socket.on('get_types', () => {
 
         socket.emit('poetry_types', poems);
@@ -595,24 +593,24 @@ io.sockets.on('connection', (socket) => {
 
 async function post_poem(title, user, text, meter) {
 
-    let id = await uuid.v1();
+    let id = await uuid.v1(); // generates a unique uuid for the poem
 
-    while (await Post.findOne({ id })) {
+    while (await Post.findOne({ id })) { // checks to make sure the uuid isn't already in use
 
         id = await uuid.v1();
 
     }
 
-    let user_data = await User.findOne({ username_case: user });
+    let user_data = await User.findOne({ username_case: user }); // finds the user in the database
 
-    if (!user_data) {
+    if (!user_data) { // if the user is not found
 
         return;
 
     }
 
-    user_data.posts.unshift(id);
-    user_data.save();
+    user_data.posts.unshift(id); // adds the uuid to the users data
+    user_data.save(); // saves the user
 
     let data = {
 
@@ -625,9 +623,9 @@ async function post_poem(title, user, text, meter) {
 
     };
 
-    poem_lists.recent.unshift(data);
+    poem_lists.recent.unshift(data); // adds the poem to the recent poems list
 
-    let final = new Post(data);
+    let final = new Post(data); // creates a new post
 
     await final.save();
 
@@ -635,7 +633,7 @@ async function post_poem(title, user, text, meter) {
 
 };
 
-async function refresh_lists() {
+async function refresh_lists() { // refreshes the lists of poems to display on the home page
 
     final = {
 
@@ -645,7 +643,7 @@ async function refresh_lists() {
 
     };
 
-    let posts = await Post.find(null, null, { sort: { likes: -1 } });
+    let posts = await Post.find(null, null, { sort: { likes: -1 } }); // gets a list of all poems sorted by likes
 
     for (let i of posts) {
 
@@ -653,7 +651,7 @@ async function refresh_lists() {
 
     }
 
-    posts.sort((a, b) => {
+    posts.sort((a, b) => { // sorts the list by date created
 
         return b.date - a.date;
 

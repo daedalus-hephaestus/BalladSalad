@@ -14,7 +14,6 @@ document.getElementById('cancel').onclick = function () {
     saved_delete = '';
 
 };
-
 document.getElementById('delete').onclick = function () {
 
     socket.emit('delete_poem', saved_delete);
@@ -41,21 +40,22 @@ let Poem = function (title, user, likes, dislikes, text, id, date) {
 };
 Poem.prototype.render = function () {
 
-    this.post.container = elem('div', 'post', this.id, ''); 
-    this.post.title = elem('h2', 'post_title', '', this.title);
+    this.post.container = elem('div', 'post', this.id, ''); // the post container
+    this.post.title = elem('h2', 'post_title', '', this.title); // the post title
 
+    // like button
     this.post.like = elem('img', 'feedback', this.id, '', '/images/like.png', () => {
 
         socket.emit('poem_feedback', { id: this.id, value: 1 });
 
     });
-
+    // dislike button
     this.post.dislike = elem('img', 'feedback', this.id, '', '/images/dislike.png', () => {
 
         socket.emit('poem_feedback', { id: this.id, value: -1 });
 
     });
-
+    // delete poem button
     this.post.remove_poem = elem('img', 'remove_icon', this.id, '', '/images/trash.png', () => {
 
         saved_delete = this.id;
@@ -63,27 +63,24 @@ Poem.prototype.render = function () {
 
     });
 
-    this.post.like_counter = elem('span', 'like_counter', `${this.id}_like_counter`, this.likes);
-    this.post.dislike_counter = elem('span', 'dislike_counter', `${this.id}_dislike_counter`, this.dislikes);
+    this.post.like_counter = elem('span', 'like_counter', `${this.id}_like_counter`, this.likes); // like counter
+    this.post.dislike_counter = elem('span', 'dislike_counter', `${this.id}_dislike_counter`, this.dislikes); // dislike counter
+    this.post.author = elem('a', 'link', '', this.user, `/account/${this.user}`); // poem author
+    this.post.poem_container = elem('div', 'poem_container', '', ''); // the poem container
+    this.post.poem = elem('p', 'poem', '', `${this.text.replace(/\n/g, "<br />")}`); // the poem text
 
-    this.post.author = elem('a', 'link', '', this.user, `/account/${this.user}`);
-
-    this.post.poem_container = elem('div', 'poem_container', '', '');
-
-    this.post.poem = elem('p', 'poem', '', `${this.text.replace(/\n/g, "<br />")}`);
-
-    this.post.container.appendChild(this.post.remove_poem);
+    this.post.container.appendChild(this.post.remove_poem); // adds delete button
     this.post.container.appendChild(document.createElement('br'));
-    this.post.container.appendChild(this.post.title);
-    this.post.container.appendChild(this.post.author);
-    this.post.container.appendChild(document.createTextNode(` - ${convert_date(this.date)}`));
-    this.post.poem_container.appendChild(this.post.poem);
-    this.post.container.appendChild(this.post.poem_container);
-    this.post.container.appendChild(this.post.like);
-    this.post.container.appendChild(this.post.dislike);
+    this.post.container.appendChild(this.post.title); // adds title
+    this.post.container.appendChild(this.post.author); // adds author
+    this.post.container.appendChild(document.createTextNode(` - ${convert_date(this.date)}`)); // adds the date posted
+    this.post.poem_container.appendChild(this.post.poem); // adds the poem to the poem container
+    this.post.container.appendChild(this.post.poem_container); // adds the poem container to the post container
+    this.post.container.appendChild(this.post.like); // adds the like button
+    this.post.container.appendChild(this.post.dislike); // adds the dislike button
     this.post.container.appendChild(document.createElement('br'));
-    this.post.container.appendChild(this.post.like_counter);
-    this.post.container.appendChild(this.post.dislike_counter);
+    this.post.container.appendChild(this.post.like_counter); // adds the like counter
+    this.post.container.appendChild(this.post.dislike_counter); // adds the dislike counter
 
     content.appendChild(this.post.container); // add the paragraph to the word info div
 

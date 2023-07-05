@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
-const { detectExtension } = require('nodemailer/lib/mime-funcs/mime-types');
 const stress_dict = JSON.parse(fs.readFileSync('server/data/compiled.json', 'utf8'));
 
 const Word = function (word) {
@@ -181,14 +180,14 @@ Line.prototype.meter_check = function (meter) {
 
     let only_syllables = false;
 
-    if (meter[0] === 'x') {
+    if (meter[0] === 'x') { // if the meter doesn't matter
 
         only_syllables = true;
 
     }
 
-    let variant_indexes = [];
-    let cycles = 1;
+    let variant_indexes = []; // the array indexes of words that have multiple pronunciations
+    let cycles = 1; // the number of possible meter variations
 
     for (let i = 0; i < this.arr.length; i++) { // loops through all the words
 
@@ -212,9 +211,9 @@ Line.prototype.meter_check = function (meter) {
 
                 t = this.arr[i].syllables.length; // adds the number of syllable variants
 
-            } else if (Array.isArray(this.arr[i].stresses)) {
+            } else if (Array.isArray(this.arr[i].stresses)) { // checks to see if it has stress variatns
 
-                t = this.arr[i].stresses.length;
+                t = this.arr[i].stresses.length; // adds the number of stress variants
 
             } else {
 
@@ -222,39 +221,39 @@ Line.prototype.meter_check = function (meter) {
 
             }
 
-            variant_indexes.push({
+            variant_indexes.push({ // adds the variant to the variant indexes array
 
                 index: i,
                 amount: t
 
             });
 
-            cycles *= t;
+            cycles *= t; // multiples the times it has to run by the amount of variants
 
         }
 
     }
 
 
-    let schema = [];
+    let schema = []; // the pattern to calculate all possible variations
     let error_iteration;
 
-    for (let i = 0; i < cycles; i++) {
+    for (let i = 0; i < cycles; i++) { // loops through all combinations
 
-        let vc = 0;
+        let vc = 0; // the index of the variant currently being used
 
-        schema[i] = [];
+        schema[i] = []; // intializes a blank array for each cycle of the schema
 
-        for (let j = 0; j < variant_indexes.length; j++) {
+        for (let j = 0; j < variant_indexes.length; j++) { // loops through all the variants
 
-            let a = variant_indexes[j].amount;
-            schema[i][j] = Math.floor(i / ((Math.pow(a, j)))) % a;
+            let a = variant_indexes[j].amount; // the amount of variants for each word with a different pronunciation
+            schema[i][j] = Math.floor(i / ((Math.pow(a, j)))) % a; // fills the schema so that each column is a unique combination of every variant
 
         }
 
-        let detected_meter = '';
+        let detected_meter = ''; // the meter of each pass
 
-        for (let w of this.arr) {
+        for (let w of this.arr) { // loops through the words
 
             if (w.variant) { // if the word is a variant, use the schema
 
@@ -281,27 +280,30 @@ Line.prototype.meter_check = function (meter) {
 
         }
 
-        for (let j = 0; j < detected_meter.length; j++) {
+        for (let j = 0; j < detected_meter.length; j++) { // loops through the meter
 
-            let expected = meter[detected_meter.length];
+            let expected = meter[detected_meter.length]; // finds what the selected meter expects
 
-            if (detected_meter[j] === '2' && expected) {
+            if (detected_meter[j] === '2' && expected) { // if the stress is partial and there is a meter
 
+                // changes the partial stress into whatever the meter dictates
                 detected_meter = `${detected_meter.substring(0, j)}${expected}${detected_meter.substring(j + 1)}`;
 
-            } else if (detected_meter[j] === '2') {
+            } else if (detected_meter[j] === '2') { // if the stress is partial but there is no meter
 
+                // changes the partial stress into a regular stress
                 detected_meter = `${detected_meter.substring(0, j)}1${detected_meter.substring(j + 1)}`;
 
             }
 
         }
 
+        // if the detected meter matches the expected meter, or if the meter doesn't matter
         if (detected_meter === meter || (detected_meter.length === meter.length && only_syllables)) {
 
-            return true;
+            return true; // return a match
 
-        } else if (detected_meter.length === meter.length || i === 0) {
+        } else if (detected_meter.length === meter.length || i === 0) { // else return an error
 
             error_iteration = detected_meter;
 
@@ -309,7 +311,7 @@ Line.prototype.meter_check = function (meter) {
 
     }
 
-    if (error_iteration.length !== meter.length) {
+    if (error_iteration.length !== meter.length) { // if there are too many syllables in the line
 
         return [{
 
@@ -319,7 +321,7 @@ Line.prototype.meter_check = function (meter) {
 
         }];
 
-    } else {
+    } else { // if there is a meter error
 
         return [{
 
@@ -419,6 +421,7 @@ Poem.prototype.check = async function (poem) {
 
     }
 
+    // if the poem has the wrong number of lines
     if ((lines.length !== this.line_number && !this.repeatable) || (lines.length % this.line_number > 0 && this.repeatable)) {
 
         errors.push({
@@ -431,13 +434,13 @@ Poem.prototype.check = async function (poem) {
 
     }
 
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) { // loops through all the liens of the poem
 
-        let meter = await lines[i].meter_check(this.meter[i % this.line_number]);
+        let meter = await lines[i].meter_check(this.meter[i % this.line_number]); // checks to see if the line fits the meter
 
-        if (meter !== true) {
+        if (meter !== true) { // if there is a meter error
 
-            for (let m of meter) {
+            for (let m of meter) { // adds the meter error to the array of errors
 
                 m.line_number = i + 1;
                 errors.push(m);
@@ -446,14 +449,14 @@ Poem.prototype.check = async function (poem) {
 
         }
 
-        if (Array.isArray(this.rhymescheme)) {
+        if (Array.isArray(this.rhymescheme)) { // if there are different rhymescheme variations
 
-            for (let r of this.rhymescheme) {
+            for (let r of this.rhymescheme) { // loops through each variation
 
-                if (rhymes[r] === undefined) {
+                if (rhymes[r] === undefined) { // if the analysis of the current scheme is empty
 
-                    rhymes[r] = {};
-                    scheme_errors[r] = [];
+                    rhymes[r] = {}; // intialize an empty object
+                    scheme_errors[r] = []; // intialize an empty error array
 
                 }
 
@@ -465,18 +468,19 @@ Poem.prototype.check = async function (poem) {
 
                 if (r) {
 
-                    if (rhymes[r][r[i % this.line_number]] === undefined) {
+                    if (rhymes[r][r[i % this.line_number]] === undefined) { // if the last word for that rhyme letter is undefined
 
-                        rhymes[r][r[i % this.line_number]] = lines[i];
+                        rhymes[r][r[i % this.line_number]] = lines[i]; // sets the word
 
 
-                    } else {
+                    } else { // if the word exists
 
+                        // check the word against the existing word
                         let does_rhyme = await lines[i].rhymes_with(rhymes[r][r[i % this.line_number]]);
 
-                        if (does_rhyme !== true) {
+                        if (does_rhyme !== true) { // if the word does not rhyme
 
-                            scheme_errors[r].push(does_rhyme);
+                            scheme_errors[r].push(does_rhyme); // adds a rhyme error to the array
 
                         }
 
@@ -518,26 +522,29 @@ Poem.prototype.check = async function (poem) {
 
     }
 
-    if (Array.isArray(this.rhymescheme)) {
+    if (Array.isArray(this.rhymescheme)) { // if the rhymescheme is an array
 
-        let selection = false;
+        let selection = false; // the rhymescheme detected
 
-        for (let i in scheme_errors) {
+        for (let i in scheme_errors) { // loops through all the errors
 
-            if (!selection) {
+            if (!selection) { // if there is no selection
 
-                selection = scheme_errors[i];
+                selection = scheme_errors[i]; // sets the first one as the selection
 
             }
 
+            // if this rhymescheme has less errors
             if (scheme_errors[i].length < selection.length) {
 
+                // sets a new rhyme scheme
                 selection = scheme_errors[i];
 
             }
 
         }
 
+        // adds the rhyme scheme errors to the main errors array
         for (let i of selection) {
 
             errors.push(i);
@@ -546,6 +553,7 @@ Poem.prototype.check = async function (poem) {
 
     }
 
+    // returns the number of lines and all the errors
     return {
 
         lines: lines.length,
