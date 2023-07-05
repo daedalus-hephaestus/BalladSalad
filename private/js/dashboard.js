@@ -101,7 +101,6 @@ socket.on('update_feedback', (data) => {
     document.getElementById(`${data.id}_dislike_counter`).innerHTML = data.dislikes;
 
 });
-
 socket.on('user_poems', (data) => {
 
     document.getElementById('name_display').innerHTML = data.username;

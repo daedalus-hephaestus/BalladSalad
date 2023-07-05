@@ -7,8 +7,11 @@ let output = document.getElementById('output');
 let input = document.getElementById('poem_input');
 let title = document.getElementById('title');
 
+let publishable = false;
+
 input.addEventListener("keyup", () => {
 
+    publishable = false;
     input.style.height = calc_height(input.value) + 'px';
 
 });
@@ -32,6 +35,18 @@ socket.on('poetry_types', (data) => {
 test.onclick = function () {
 
     output.hidden = true;
+
+    if (publishable && title.value.length > 0) {
+
+        socket.emit('publish_poem', {
+
+            title: document.getElementById('title').value,
+            line: document.getElementById('poem_input').value,
+            meter: meter.value
+
+        });
+
+    }
 
     if (title.value.length > 0) {
 
@@ -57,7 +72,12 @@ socket.on('errors', (data) => {
 
 });
 
-socket.on('poem_published', (data) => {
+socket.on('poem_publishable', () => {
+
+    publishable = true;
+
+});
+socket.on('poem_published', () => {
 
     window.location.href = '/';
 
@@ -89,8 +109,6 @@ function display_errors(data) {
     };
 
     for (let i of data) {
-
-        console.log(i);
 
         if (i.reason === 'line_number') {
 
@@ -126,6 +144,13 @@ function display_errors(data) {
     if (data.length > 0) {
 
         output.innerHTML = `${errors.line_number}${errors.dictionary}${errors.syllables}${errors.meter}${errors.rhyme}`;
+
+        if (publishable) {
+
+            output.innerHTML += `<br>Despite these errors, the poem is still publishable. Click publish again to post!`;
+
+        }
+
         output.hidden = false;
 
     } else {

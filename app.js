@@ -355,7 +355,7 @@ io.sockets.on('connection', (socket) => {
         socket.emit('username', s.username);
 
     });
-    
+
     socket.on('get_types', () => {
 
         socket.emit('poetry_types', poems);
@@ -404,12 +404,27 @@ io.sockets.on('connection', (socket) => {
 
         if (publishable) {
 
-            post_poem(data.title, s.username, data.line, data.meter);
-            socket.emit('poem_published');
+
+            if (test_poem.errors.length === 0) {
+
+                post_poem(data.title, s.username, data.line, data.meter);
+                socket.emit('poem_published');
+
+            } else {
+
+                socket.emit('poem_publishable');
+
+            }
 
         }
 
         socket.emit('errors', test_poem.errors);
+
+    });
+    socket.on('publish_poem', async (data) => {
+
+        post_poem(data.title, s.username, data.line, data.meter);
+        socket.emit('poem_published');
 
     });
     socket.on('check_email', async (data) => { // the client checking an email's availability
@@ -563,7 +578,7 @@ io.sockets.on('connection', (socket) => {
     });
     socket.on('delete_poem', async (data) => {
 
-        let poem = await Post.deleteOne({id: data, user: s.username});
+        let poem = await Post.deleteOne({ id: data, user: s.username });
 
         if (!poem) {
 
