@@ -33,31 +33,31 @@ footer a {
 
 .hamburger_container {
 	position: fixed;
-	top: 2vh;
 	left: 0;
     z-index: 1;
 }
 .menu_image {
 	position: fixed;
-	left: -28vh;
-    height: 96vh;
+	top: 0;
+	left: -17vw;
+    width: 24vw;
+	height: 100vh;
     transition: 0.25s;
 }
 .menu_button {
-	position: fixed;
-    height: 40px;
-	top: 3vh;
-	left: 1vh;
+	position: absolute;
+    height: 3vw;
+	left: 0.5vw;
     transition: 0.25s;
 }
 .nav_button {
     position: relative;
     margin-top: 10px;
-    left: -29vh;
-    width: 26vh;
-	height: 30px;
+    left: -31vh;
+    width: 15vw;
+	height: 4vw;
 	font-family: 'Lora';
-	font-size: 16px;
+	font-size: 1.5vw;
 	color: var(--platinum);
 	background-color: var(--red-salsa);
 	transition:
@@ -74,14 +74,14 @@ footer a {
     display: none;
 }
 #menu_checkbox:checked ~ .menu_image {
-    left: 0vh;
+    left: 0vw;
 }
 #menu_checkbox:checked ~ label .menu_button {
-    left: 29vh;
+    left: 18vw;
     content: url('/images/close.png');
 }
 #menu_checkbox:checked ~ form .nav_button {
-    left: 1vh;
+    left: 1vw;
 }
 
 .creator_page {
@@ -90,7 +90,6 @@ footer a {
 
 .container {
 	text-align: center;
-	width: 60%;
 	height: 80%;
 	padding: 25px;
 	margin: 5% auto;
@@ -365,3 +364,9 @@ footer a {
 	width: 500px;
 }
 
+@media only screen and (max-width: 880px) {
+
+	.post_container, .binding {
+		width: 75vw;
+	}
+}
