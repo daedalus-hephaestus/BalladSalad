@@ -53,7 +53,7 @@ footer a {
 .nav_button {
     position: relative;
     margin-top: 10px;
-    left: -31vh;
+    left: -16vw;
     width: 15vw;
 	height: 4vw;
 	font-family: 'Lora';
@@ -77,7 +77,7 @@ footer a {
     left: 0vw;
 }
 #menu_checkbox:checked ~ label .menu_button {
-    left: 18vw;
+    left: 17.5vw;
     content: url('/images/close.png');
 }
 #menu_checkbox:checked ~ form .nav_button {
@@ -368,5 +368,32 @@ footer a {
 
 	.post_container, .binding {
 		width: 75vw;
+	}
+
+}
+
+@media only screen and (max-width: 500px) {
+	.menu_image {
+		left: -60vw;
+		width: 75vw;
+		height: 100vh;
+	}
+	.menu_button {
+		position: absolute;
+		height: 4vw;
+		left: 1vw;
+	}
+	.nav_button {
+		position: relative;
+		left: -59vw;
+		width: 55vw;
+		height: 8vw;
+		font-size: 4vw;
+	}	
+	#menu_checkbox:checked ~ label .menu_button {
+		left: 61vw;
+	}
+	#menu_checkbox:checked ~ form .nav_button {
+		left: 1vw;
 	}
 }
