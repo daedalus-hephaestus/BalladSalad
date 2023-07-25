@@ -42,15 +42,15 @@ Poem.prototype.render = function () {
 
     this.post.container = elem('div', 'post', this.id, ''); // the post container
     this.post.title = elem('h2', 'post_title', '', this.title); // the post title
-
-    // like button
-    this.post.like = elem('img', 'feedback', this.id, '', '/images/like.png', () => {
+    this.post.binding = elem('img', 'binding', `${this.id}_binding`, '', '/images/notebook.png');
+    this.post.feedback_container = elem('div', 'feedback_container', '', '');
+    this.post.like = elem('img', 'feedback like', this.id, '', '/images/like.png', () => {
 
         socket.emit('poem_feedback', { id: this.id, value: 1 });
 
     });
-    // dislike button
-    this.post.dislike = elem('img', 'feedback', this.id, '', '/images/dislike.png', () => {
+
+    this.post.dislike = elem('img', 'feedback dislike', this.id, '', '/images/dislike.png', () => {
 
         socket.emit('poem_feedback', { id: this.id, value: -1 });
 
@@ -69,6 +69,7 @@ Poem.prototype.render = function () {
     this.post.poem_container = elem('div', 'poem_container', '', ''); // the poem container
     this.post.poem = elem('p', 'poem', '', `${this.text.replace(/\n/g, "<br />")}`); // the poem text
 
+    this.post.container.appendChild(this.post.binding);
     this.post.container.appendChild(this.post.remove_poem); // adds delete button
     this.post.container.appendChild(document.createElement('br'));
     this.post.container.appendChild(this.post.title); // adds title
@@ -76,15 +77,23 @@ Poem.prototype.render = function () {
     this.post.container.appendChild(document.createTextNode(` - ${convert_date(this.date)}`)); // adds the date posted
     this.post.poem_container.appendChild(this.post.poem); // adds the poem to the poem container
     this.post.container.appendChild(this.post.poem_container); // adds the poem container to the post container
-    this.post.container.appendChild(this.post.like); // adds the like button
-    this.post.container.appendChild(this.post.dislike); // adds the dislike button
+    this.post.feedback_container.appendChild(this.post.like);
+    this.post.feedback_container.appendChild(this.post.dislike);
+    this.post.container.appendChild(this.post.feedback_container);
     this.post.container.appendChild(document.createElement('br'));
     this.post.container.appendChild(this.post.like_counter); // adds the like counter
     this.post.container.appendChild(this.post.dislike_counter); // adds the dislike counter
 
+    this.post.container.style.transform = `rotate(${randomNum(-2, 2)}deg)`;
+
     content.appendChild(this.post.container); // add the paragraph to the word info div
 
 };
+
+function randomNum(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 socket.emit('get_username');
 socket.on('username', (data) => {
 
