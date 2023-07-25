@@ -1,31 +1,38 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<title>Ballad Salad Home</title>
+		<meta name="viewport" e content="width=device-width, initial-scale=1.0" />
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/js/moment.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+	</head>
 
-<head>
-    <title>Ballad Salad Home</title>
-    <meta name="viewport"e content="width=device-width, initial-scale=1.0">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/moment.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-
-<body class="front_page">
-    <div class="container">
-        <form method="GET" action="/dashboard">
-            <input id="login_button" type="submit" value="login" class="button" />
-        </form>
-        <br>
-        Sort by
-        <select id="filter" class="post_filter">
-            <option value="recent">recent</option>
-            <option value="liked">liked</option>
-        </select>
-        <div id="content">
-
-        </div>
-    </div>
-    <script src="js/index.js"></script>
-</body>
-
+	<body class="front_page">
+		<div class="container">
+			<form method="GET" action="/dashboard">
+				<input id="login_button" type="submit" value="login" class="button" />
+			</form>
+			<br />
+			Sort by
+			<select id="filter" class="post_filter">
+				<option value="recent">recent</option>
+				<option value="liked">liked</option>
+			</select>
+			<div id="content"></div>
+		</div>
+		<script src="js/index.js"></script>
+	</body>
+	<footer>
+		Image by
+		<a
+			href="https://www.freepik.com/free-photo/salad-from-tomatoes-cucumber-red-onions-lettuce-leaves-healthy-summer-vitamin-menu-vegan-vegetable-food-vegetarian-dinner-table-top-view-flat-lay_6713750.htm"
+			target="_blank"
+			>timolina</a
+		>
+		on Freepik
+	</footer>
 </html>

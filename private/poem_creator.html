@@ -1,28 +1,47 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<title>Poem Creator</title>
+		<meta name="viewport" e content="width=device-width, initial-scale=1.0" />
+		<script src="/socket.io/socket.io.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/style.css" />
+	</head>
 
-<head>
-    <title>Poem Creator</title>
-    <meta name="viewport"e content="width=device-width, initial-scale=1.0">
-    <script src="/socket.io/socket.io.js"></script>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-</head>
-
-<body>
-    <div class="container">
-        <input type="button" value="home" class="button" onclick="window.location.href='/';">
-        <input type="button" value="dashboard" class="button" onclick="window.location.href='/dashboard';">
-        <br><br>
-        <input id="title" class="title_input" placeholder="title">
-        <br>
-        <textarea class="poem_input" id="poem_input" placeholder=". . ."></textarea>
-        <br>
-        <br>
-        <select id="meter" class="select"></select><input class="button" type="button" value="Publish" id="test">
-        <br>
-        <p id="output" class="post" hidden></p>
-    </div>
-    <script src="/js/poem_creator.js"></script>
-</body>
-
+	<body class="creator_page">
+		<div class="container">
+			<input
+				type="button"
+				value="home"
+				class="button"
+				onclick="window.location.href='/';" />
+			<input
+				type="button"
+				value="dashboard"
+				class="button"
+				onclick="window.location.href='/dashboard';" />
+			<br /><br />
+			<input id="title" class="title_input" placeholder="title" />
+			<br />
+			<textarea
+				class="poem_input"
+				id="poem_input"
+				placeholder=". . ."></textarea>
+			<br />
+			<br />
+			<select id="meter" class="select"></select
+			><input class="button" type="button" value="Publish" id="test" />
+			<br />
+			<p id="output" class="post" hidden></p>
+		</div>
+		<script src="/js/poem_creator.js"></script>
+	</body>
+	<footer>
+		Image by
+		<a
+			href="https://www.freepik.com/free-photo/preparing-salad-female-chef-cutting-fresh-vegetables_9970404.htm"
+			target="_blank"
+			>master1305</a
+		>
+		on Freepik
+	</footer>
 </html>

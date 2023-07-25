@@ -12,17 +12,27 @@
 }
 
 body {
-	/*background-color: var(--cg-blue);*/
     background-image: url('/images/salad_blurred.jpg');
-	background-size: 100%;
+	background-size: cover;
 	background-attachment: fixed;
+    background-position: 50%;
 	color: var(--granite-gray);
+    min-height: 95vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.front_page {
-	background-image: url('/images/salad_blurred.jpg');
-	background-size: 100%;
-	background-attachment: fixed;
+footer {
+    text-align: center;
+    color: var(--platinum);
+    margin-top: auto;
+}
+footer a {
+    color: var(--red-salsa);
+}
+
+.creator_page {
+    background-image: url('/images/making_salad_blurred.jpg');
 }
 
 .container {
@@ -35,6 +45,17 @@ body {
 	color: var(--granite-gray);
 	font-size: 16px;
 	font-family: 'Lora';
+}
+.privacy_container {
+    background-color: var(--platinum);
+    text-align: center;
+	width: 60%;
+	height: 80%;
+	padding: 25px;
+	margin: 5% auto;
+	border-radius: 4px;
+	color: var(--granite-gray);
+	font-size: 16px;
 }
 
 .register_container {
@@ -317,4 +338,5 @@ body {
 	.title_input {
 		width: 85%;
 	}
+
 }
