@@ -8,6 +8,22 @@
 	</head>
 
 	<body class="creator_page">
+		<div class="hamburger_container">
+			<input type="checkbox" id="menu_checkbox" />
+			<img src="/images/menu.png" class="menu_image" />
+			<label for="menu_checkbox">
+				<img src="/images/hamburger.png" class="menu_button"/>
+			</label>
+			<form method="GET" action="/">
+				<input type="submit" value="home" class="nav_button" />
+			</form>
+			<form method="GET" action="/dashboard">
+				<input type="submit" value="dashboard" class="nav_button" />
+			</form>
+			<form method="POST" action="/logout">
+				<input type="submit" value="logout" class="nav_button" />
+			</form>
+		</div>
 		<div class="container">
 			<input
 				type="button"

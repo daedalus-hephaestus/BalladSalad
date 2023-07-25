@@ -11,13 +11,24 @@
 </head>
 
 <body class="front_page">
+    <div class="hamburger_container">
+        <input type="checkbox" id="menu_checkbox" />
+        <img src="/images/menu.png" class="menu_image" />
+        <label for="menu_checkbox">
+            <img src="/images/hamburger.png" class="menu_button"/>
+        </label>
+        <form method="GET" action="/">
+            <input type="submit" value="home" class="nav_button" />
+        </form>
+        <form method="GET" action="/poem_creator">
+            <input type="submit" value="write" class="nav_button" />
+        </form>
+        <form method="POST" action="/logout">
+            <input type="submit" value="logout" class="nav_button" />
+        </form>
+    </div>
     <div class="container">
         <h2 id="name_display" class="name_display"></h2>
-        <form method="POST" action="/logout" style="text-align: right;">
-            <input type="button" value="write" class="button" onclick="window.location.href='/poem_creator';">
-            <input type="button" value="home" class="button" onclick="window.location.href='/';">&nbsp;
-            <input type="submit" value="logout" class="button">
-        </form>
         Sort by
         <select id="filter" class="post_filter">
             <option value="recent">recent</option>

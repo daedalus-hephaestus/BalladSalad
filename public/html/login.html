@@ -9,6 +9,19 @@
 </head>
 
 <body>
+    <div class="hamburger_container">
+        <input type="checkbox" id="menu_checkbox" />
+        <img src="/images/menu.png" class="menu_image" />
+        <label for="menu_checkbox">
+            <img src="/images/hamburger.png" class="menu_button"/>
+        </label>
+        <form method="GET" action="/">
+            <input type="submit" value="home" class="nav_button" />
+        </form>
+        <form method="GET" action="/register">
+            <input type="submit" value="register" class="nav_button" />
+        </form>
+    </div>
     <div class="register_container">
         <form method="POST" action="/login">
             <br>
@@ -24,13 +37,12 @@
         </form>
         <script src="js/login.js"></script>
     </div>
-    <div class="link_container">
-        <a href="/" class="link">home</a>
-        <a href="/register" class="link">create account</a>
-        <a href="/privacy" class="link">privacy</a>
-    </div>
+    
 </body>
 <footer>
+    <div class="link_container">
+        <a href="/privacy" class="link">privacy policy</a>
+    </div>
     Image by
     <a
         href="https://www.freepik.com/free-photo/salad-from-tomatoes-cucumber-red-onions-lettuce-leaves-healthy-summer-vitamin-menu-vegan-vegetable-food-vegetarian-dinner-table-top-view-flat-lay_6713750.htm"

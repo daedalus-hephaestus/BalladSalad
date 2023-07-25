@@ -55,9 +55,9 @@ footer a {
     margin-top: 10px;
     left: -16vw;
     width: 15vw;
-	height: 4vw;
+	height: 2vw;
 	font-family: 'Lora';
-	font-size: 1.5vw;
+	font-size: 1vw;
 	color: var(--platinum);
 	background-color: var(--red-salsa);
 	transition:
@@ -311,11 +311,8 @@ footer a {
 }
 
 .link_container {
-	margin: 0 auto;
-	position: absolute;
-	bottom: 15px;
+	margin: 10px auto;
 	text-align: center;
-	width: 99%;
 }
 
 .select {
