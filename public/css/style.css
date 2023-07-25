@@ -12,27 +12,80 @@
 }
 
 body {
-    background-image: url('/images/salad_blurred.jpg');
+	background-image: url('/images/salad_blurred.jpg');
 	background-size: cover;
 	background-attachment: fixed;
-    background-position: 50%;
+	background-position: 50%;
 	color: var(--granite-gray);
-    min-height: 95vh;
-    display: flex;
-    flex-direction: column;
+	min-height: 95vh;
+	display: flex;
+	flex-direction: column;
 }
 
 footer {
-    text-align: center;
-    color: var(--platinum);
-    margin-top: auto;
+	text-align: center;
+	color: var(--platinum);
+	margin-top: auto;
 }
 footer a {
-    color: var(--red-salsa);
+	color: var(--red-salsa);
+}
+
+.hamburger_container {
+	position: fixed;
+	top: 2vh;
+	left: 0;
+    z-index: 1;
+}
+.menu_image {
+	position: fixed;
+	left: -28vh;
+    height: 96vh;
+    transition: 0.25s;
+}
+.menu_button {
+	position: fixed;
+    height: 40px;
+	top: 3vh;
+	left: 1vh;
+    transition: 0.25s;
+}
+.nav_button {
+    position: relative;
+    margin-top: 10px;
+    left: -29vh;
+    width: 26vh;
+	height: 30px;
+	font-family: 'Lora';
+	font-size: 16px;
+	color: var(--platinum);
+	background-color: var(--red-salsa);
+	transition:
+        left 0.25s,
+        background-color 0.4s;
+	border: none;
+	box-shadow: 1px 1px 6px var(--granite-gray);
+}
+.nav_button:hover {
+    background-color: var(--granite-gray);
+}
+
+#menu_checkbox {
+    display: none;
+}
+#menu_checkbox:checked ~ .menu_image {
+    left: 0vh;
+}
+#menu_checkbox:checked ~ label .menu_button {
+    left: 29vh;
+    content: url('/images/close.png');
+}
+#menu_checkbox:checked ~ form .nav_button {
+    left: 1vh;
 }
 
 .creator_page {
-    background-image: url('/images/making_salad_blurred.jpg');
+	background-image: url('/images/making_salad_blurred.jpg');
 }
 
 .container {
@@ -47,8 +100,8 @@ footer a {
 	font-family: 'Lora';
 }
 .privacy_container {
-    background-color: var(--platinum);
-    text-align: center;
+	background-color: var(--platinum);
+	text-align: center;
 	width: 60%;
 	height: 80%;
 	padding: 25px;
@@ -130,16 +183,18 @@ footer a {
 	outline: none;
 }
 
+.post_container {
+    width: 50vw;
+    margin: 40px auto;
+}
+
 .post {
 	background-color: white;
 	text-align: center;
-	max-width: 600px;
-	height: 80%;
 	padding: 25px;
-	margin: 5% auto;
 	border-radius: 4px;
 	box-shadow: 6px 6px 6px #605f5e88;
-	border-top: double 6px #bcbcbaff;
+    margin: -10px auto;
 }
 
 .poem_container {
@@ -150,8 +205,8 @@ footer a {
 }
 
 .binding {
-	width: 100%;
-	margin-top: -48px;
+    margin: 0 auto;
+    width: 50vw;
 }
 
 .poem {
@@ -206,11 +261,11 @@ footer a {
 }
 
 .feedback_container {
-    margin: 0 auto;
-    margin-top: 25px;
-    width: 100px;
-    height: 43px;
-    overflow: hidden;
+	margin: 0 auto;
+	margin-top: 25px;
+	width: 100px;
+	height: 43px;
+	overflow: hidden;
 }
 
 .feedback {
@@ -220,21 +275,21 @@ footer a {
 	animation: pulse-animation 2s infinite;
 }
 @keyframes pulse-animation {
-    1% {
-        width: 38px;
-    }
-    5% {
-        width: 42px;
-    }
-    7% {
-        width: 40px;
-    }
+	1% {
+		width: 38px;
+	}
+	5% {
+		width: 42px;
+	}
+	7% {
+		width: 40px;
+	}
 }
 .like {
-    float: left;
+	float: left;
 }
 .dislike {
-    float: right;
+	float: right;
 }
 
 .button {
@@ -310,33 +365,3 @@ footer a {
 	width: 500px;
 }
 
-@media only screen and (max-width: 880px) {
-	body {
-		width: 96%;
-	}
-
-	.text_input {
-		width: 80%;
-	}
-
-	.register_container {
-		width: 85%;
-	}
-
-	.container {
-		width: 85%;
-	}
-
-	.post {
-		width: 83%;
-	}
-
-	.poem_input {
-		width: 85%;
-	}
-
-	.title_input {
-		width: 85%;
-	}
-
-}

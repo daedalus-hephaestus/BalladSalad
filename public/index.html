@@ -5,6 +5,7 @@
 		<meta name="viewport" e content="width=device-width, initial-scale=1.0" />
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/moment.min.js"></script>
+		<script src="/js/poem.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
 		<link
 			rel="stylesheet"
@@ -12,10 +13,20 @@
 	</head>
 
 	<body class="front_page">
-		<div class="container">
+		<div class="hamburger_container">
+			<input type="checkbox" id="menu_checkbox" />
+			<img src="/images/menu.png" class="menu_image" />
+			<label for="menu_checkbox">
+				<img src="/images/hamburger.png" class="menu_button"/>
+			</label>
 			<form method="GET" action="/dashboard">
-				<input id="login_button" type="submit" value="login" class="button" />
+				<input id="login_button" type="submit" value="login" class="nav_button" />
 			</form>
+			<form method="GET" action="/dashboard">
+				<input id="login_button" type="submit" value="login" class="nav_button" />
+			</form>
+		</div>
+		<div class="container">
 			<br />
 			Sort by
 			<select id="filter" class="post_filter">
