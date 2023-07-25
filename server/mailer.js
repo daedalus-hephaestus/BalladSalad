@@ -2,7 +2,7 @@ const fs = require('fs');
 const hidden_data = require('./hidden_data');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
-/*const OAuth2 = google.auth.OAuth2;
+const OAuth2 = google.auth.OAuth2;
 const oauth2Client = new OAuth2(
     hidden_data.oauth_id,
     hidden_data.oauth_secret,
@@ -30,7 +30,7 @@ const smtpTransport = nodemailer.createTransport({
         }
     }
 });
-*/
+
 function mail(heading, message, address) { // sends an email
 
     let mailOptions = {
