@@ -35,7 +35,7 @@ function mail(heading, message, address) { // sends an email
 
     let mailOptions = {
 
-        from: hidden_data.email,
+        from: hidden_data.email, // the sender
         to: address,
         subject: heading,
         generateTextFromHTML: true,
