@@ -150,6 +150,9 @@ app.get('/poem_creator', isAuth, (req, res) => {
 app.get('/privacy', (req, res) => {
 	res.sendFile(`${__dirname}/public/html/privacy.html`);
 });
+app.get('/sitemap.txt', (req, res) => {
+	res.sendFile(`${__dirname}/server/sitemap.txt`);
+});
 
 app.post('/create_account', async (req, res) => {
 	const { email, username, password } = req.body; // gets the submitted email and password from the inputs
