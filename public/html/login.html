@@ -1,55 +1,60 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<title>Login to Ballad Salad</title>
+		<meta name="viewport" e content="width=device-width, initial-scale=1.0" />
+		<script src="/socket.io/socket.io.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+	</head>
 
-<head>
-    <title>Login to Ballad Salad</title>
-    <meta name="viewport"e content="width=device-width, initial-scale=1.0">
-    <script src="/socket.io/socket.io.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-
-<body>
-    <div class="hamburger_container">
-        <input type="checkbox" id="menu_checkbox" />
-        <img src="/images/menu.png" class="menu_image" />
-        <label for="menu_checkbox">
-            <img src="/images/hamburger.png" class="menu_button"/>
-        </label>
-        <form method="GET" action="/">
-            <input type="submit" value="home" class="nav_button" />
-        </form>
-        <form method="GET" action="/register">
-            <input type="submit" value="register" class="nav_button" />
-        </form>
-    </div>
-    <div class="register_container">
-        <form method="POST" action="/login">
-            <br>
-            <input type="text" placeholder="username" name="username" class="text_input">
-            <br><br>
-            <input type="password" placeholder="password" name="password" class="text_input">
-            <br>
-            <p id="incorrect" class="incorrect"></p>
-            <input type="submit" class="button">
-            <br><br>
-            <a href="/forgot" class="link">forgot password?</a>
-            <br>
-        </form>
-        <script src="js/login.js"></script>
-    </div>
-    
-</body>
-<footer>
-    <div class="link_container">
-        <a href="/privacy" class="link">privacy policy</a>
-    </div>
-    Image by
-    <a
-        href="https://www.freepik.com/free-photo/salad-from-tomatoes-cucumber-red-onions-lettuce-leaves-healthy-summer-vitamin-menu-vegan-vegetable-food-vegetarian-dinner-table-top-view-flat-lay_6713750.htm"
-        target="_blank"
-        >timolina</a
-    >
-    on Freepik
-</footer>
-
+	<body>
+		<input type="checkbox" id="menu_checkbox" />
+		<div class="hamburger_container">
+			<img src="/images/menu.png" class="menu_image" />
+			<label for="menu_checkbox">
+				<img src="/images/hamburger.png" class="menu_button" />
+			</label>
+			<form method="GET" action="/">
+				<input type="submit" value="home" class="nav_button" />
+			</form>
+			<form method="GET" action="/register">
+				<input type="submit" value="register" class="nav_button" />
+			</form>
+		</div>
+		<div class="register_container">
+			<form method="POST" action="/login">
+				<br />
+				<input
+					type="text"
+					placeholder="username"
+					name="username"
+					class="text_input" />
+				<br /><br />
+				<input
+					type="password"
+					placeholder="password"
+					name="password"
+					class="text_input" />
+				<br />
+				<p id="incorrect" class="incorrect"></p>
+				<input type="submit" class="button" />
+				<br /><br />
+				<a href="/forgot" class="link">forgot password?</a>
+				<br />
+			</form>
+			<script src="js/login.js"></script>
+		</div>
+	</body>
+	<footer>
+		<div class="link_container">
+			<a href="/privacy" class="link">privacy policy</a>
+		</div>
+		Image by
+		<a
+			href="https://www.freepik.com/free-photo/salad-from-tomatoes-cucumber-red-onions-lettuce-leaves-healthy-summer-vitamin-menu-vegan-vegetable-food-vegetarian-dinner-table-top-view-flat-lay_6713750.htm"
+			target="_blank"
+			>timolina</a
+		>
+		on Freepik
+	</footer>
 </html>

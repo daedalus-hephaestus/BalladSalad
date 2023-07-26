@@ -33,35 +33,33 @@ footer a {
 
 .hamburger_container {
 	position: fixed;
-	left: 0;
+	left: -17vw;
+	width: 24vw;
+	top: 0;
+	transition: 0.25s;
     z-index: 4;
 }
 .menu_image {
-	position: fixed;
-	top: 0;
-	left: -17vw;
+	position: absolute;
     width: 24vw;
 	height: 100vh;
-    transition: 0.25s;
 }
 .menu_button {
 	position: absolute;
     height: 3vw;
-	left: 0.5vw;
-    transition: 0.25s;
+	left: 17.5vw;
 }
 .nav_button {
     position: relative;
-    margin-top: 10px;
-    left: -16vw;
-    width: 15vw;
-	height: 2vw;
+	margin-left: 5%;
+	margin-top: 2%;
+	height: 4vh;
+	width: 65%;
 	font-family: 'Lora';
-	font-size: 1vw;
+	font-size: 2vh;
 	color: var(--platinum);
 	background-color: var(--red-salsa);
 	transition:
-        left 0.25s,
         background-color 0.4s;
 	border: none;
 	box-shadow: 1px 1px 6px var(--granite-gray);
@@ -71,22 +69,18 @@ footer a {
 }
 
 .logo {
-	width: 25vw;
+	width: 0vw;
 	margin: 0 auto;
 }
 
 #menu_checkbox {
     display: none;
 }
-#menu_checkbox:checked ~ .menu_image {
+#menu_checkbox:checked ~ .hamburger_container {
     left: 0vw;
 }
 #menu_checkbox:checked ~ label .menu_button {
-    left: 17.5vw;
     content: url('/images/close.png');
-}
-#menu_checkbox:checked ~ form .nav_button {
-    left: 1vw;
 }
 
 .creator_page {
@@ -397,27 +391,24 @@ footer a {
 }
 
 @media only screen and (max-width: 500px) {
+	.hamburger_container {
+		width: 50vw;
+		left: -36vw;
+	}
 	.menu_image {
-		left: -60vw;
-		width: 75vw;
-		height: 100vh;
+		width: 50vw;
 	}
 	.menu_button {
-		position: absolute;
-		height: 4vw;
-		left: 1vw;
+		width: 6vw;
+		height: 6vw;
+		left: 36.5vw;
 	}
 	.nav_button {
 		position: relative;
-		left: -59vw;
-		width: 55vw;
-		height: 8vw;
+		margin-left: 5%;
+		margin-top: 1vh;
+		height: 4vh;
+		width: 65%;
 		font-size: 4vw;
-	}	
-	#menu_checkbox:checked ~ label .menu_button {
-		left: 61vw;
-	}
-	#menu_checkbox:checked ~ form .nav_button {
-		left: 1vw;
 	}
 }
