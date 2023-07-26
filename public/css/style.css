@@ -94,7 +94,7 @@ footer a {
 }
 
 .name_container {
-	position: fixed;
+	position: absolute;
 	left: 20vw;
 	rotate: -10deg;
 	z-index: 2;
