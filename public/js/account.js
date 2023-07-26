@@ -17,7 +17,7 @@ socket.on('update_feedback', (data) => {
 });
 
 socket.on('user_poems', (data) => {
-	document.getElementById('name_display').innerHTML = data.username;
+	document.getElementById('name_display').innerHTML = `${data.username}`;
 	load_poems(data.posts);
 });
 
@@ -35,7 +35,6 @@ function load_poems(data) {
 
 function convert_date(date) {
 	let final = moment(date).format('MMMM Do YYYY, h:mm a');
-
 	return final;
 }
 

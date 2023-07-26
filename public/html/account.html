@@ -1,51 +1,56 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<title>User Profile</title>
+		<meta name="viewport" e content="width=device-width, initial-scale=1.0" />
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/js/moment.min.js"></script>
+		<script src="/js/poem.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/style.css" />
+	</head>
 
-<head>
-    <title>User Profile</title>
-    <meta name="viewport"e content="width=device-width, initial-scale=1.0">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/moment.min.js"></script>
-    <script src="/js/poem.js"></script>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-</head>
-
-<body class="front_page">
-    <div class="hamburger_container">
-        <input type="checkbox" id="menu_checkbox" />
-        <img src="/images/menu.png" class="menu_image" />
-        <label for="menu_checkbox">
-            <img src="/images/hamburger.png" class="menu_button"/>
-        </label>
-        <form method="GET" action="/">
-            <input type="submit" value="home" class="nav_button" />
-        </form>
-        <form method="GET" action="/dashboard">
-            <input id="login_button" type="submit" value="login" class="nav_button" />
-        </form>
-        <form method="GET" action="/register">
-            <input type="submit" value="register" class="nav_button" />
-        </form>
-    </div>
-    <div class="container">
-        <h2 id="name_display" class="name_display"></h2>
-        Sort by
-        <select id="filter" class="post_filter">
-            <option value="recent">recent</option>
-            <option value="liked">liked</option>
-        </select>
-        <div id="content"></div>
-    </div>
-    <script src="/js/account.js"></script>
-</body>
-<footer>
-    Image by
-    <a
-        href="https://www.freepik.com/free-photo/salad-from-tomatoes-cucumber-red-onions-lettuce-leaves-healthy-summer-vitamin-menu-vegan-vegetable-food-vegetarian-dinner-table-top-view-flat-lay_6713750.htm"
-        target="_blank"
-        >timolina</a
-    >
-    on Freepik
-</footer>
-
+	<body class="front_page">
+		<div class="name_container">
+			<img src="/images/sticky_note.png" class="name_image" />
+			<h2 id="name_display" class="name_display"></h2>
+		</div>
+		<div class="hamburger_container">
+			<input type="checkbox" id="menu_checkbox" />
+			<img src="/images/menu.png" class="menu_image" />
+			<label for="menu_checkbox">
+				<img src="/images/hamburger.png" class="menu_button" />
+			</label>
+			<form method="GET" action="/">
+				<input type="submit" value="home" class="nav_button" />
+			</form>
+			<form method="GET" action="/dashboard">
+				<input
+					id="login_button"
+					type="submit"
+					value="login"
+					class="nav_button" />
+			</form>
+			<form method="GET" action="/register">
+				<input type="submit" value="register" class="nav_button" />
+			</form>
+		</div>
+		<div class="container">
+			Sort by
+			<select id="filter" class="post_filter">
+				<option value="recent">recent</option>
+				<option value="liked">liked</option>
+			</select>
+			<div id="content"></div>
+		</div>
+		<script src="/js/account.js"></script>
+	</body>
+	<footer>
+		Image by
+		<a
+			href="https://www.freepik.com/free-photo/salad-from-tomatoes-cucumber-red-onions-lettuce-leaves-healthy-summer-vitamin-menu-vegan-vegetable-food-vegetarian-dinner-table-top-view-flat-lay_6713750.htm"
+			target="_blank"
+			>timolina</a
+		>
+		on Freepik
+	</footer>
 </html>
