@@ -41,7 +41,7 @@ socket.on('update_feedback', (data) => {
 });
 socket.on('user_poems', (data) => {
 
-    document.getElementById('name_display').innerHTML = data.username;
+    document.getElementById('name_display').appendChild(document.createTextNode(`${data.username}\n(you)`));
     load_poems(data.posts);
 
 });
