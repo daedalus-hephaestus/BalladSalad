@@ -53,10 +53,10 @@ footer a {
     position: relative;
 	margin-left: 5%;
 	margin-top: 2%;
-	height: 4vh;
+	height: 6vh;
 	width: 65%;
 	font-family: 'Lora';
-	font-size: 2vh;
+	font-size: 3vh;
 	color: var(--platinum);
 	background-color: var(--red-salsa);
 	transition:
