@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Ballad Salad Home</title>
+		<title>Ballad Salad - The poetry social media</title>
+		<meta
+			name="description"
+			content="On Ballad Salad you can read, post, and share poetry.
+			Current available meters include many varieties of sonnets, haikus, and ballads." />
 		<meta name="viewport" e content="width=device-width, initial-scale=1.0" />
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/moment.min.js"></script>
@@ -17,16 +21,20 @@
 		<div class="hamburger_container">
 			<img src="/images/menu.png" class="menu_image" />
 			<label for="menu_checkbox">
-				<img src="/images/hamburger.png" class="menu_button"/>
+				<img src="/images/hamburger.png" class="menu_button" />
 			</label>
 			<form method="GET" action="/dashboard">
-				<input id="login_button" type="submit" value="login" class="nav_button" />
+				<input
+					id="login_button"
+					type="submit"
+					value="login"
+					class="nav_button" />
 			</form>
 			<form method="GET" action="/register">
 				<input type="submit" value="register" class="nav_button" />
 			</form>
 		</div>
-		<img src="/images/logo.png" class="logo">
+		<img src="/images/logo.png" class="logo" />
 		<div class="container">
 			<br />
 			Sort by
